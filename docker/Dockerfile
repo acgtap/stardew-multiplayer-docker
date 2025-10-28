@@ -6,7 +6,8 @@ ENV APP_NAME="StardewValley"
 
 # Support both regular Docker and Pterodactyl deployments
 ENV SERVER_DIR="/home/container" \
-    CONFIG_DIR="/config"
+    CONFIG_DIR="/config" \
+    S6_RUNTIME_DIR="/tmp/s6-runtime"
 
 RUN apt-get update
 RUN apt-get install -y wget unzip tar strace mono-complete xterm gettext-base jq netcat procps 
