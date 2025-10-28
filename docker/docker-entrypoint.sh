@@ -118,10 +118,15 @@ if [ "$PTERODACTYL_MODE" = true ]; then
   # Set VNC password (use writable directory)
   VNC_DIR="$HOME/.vnc"
   mkdir -p "$VNC_DIR"
+  
+  # VNC password configuration
+  # x11vnc can use direct password with -passwd or encrypted file
+  # We'll use x11vnc's built-in password option instead of vncpasswd
   if [ -n "$VNC_PASSWORD" ]; then
-    echo "$VNC_PASSWORD" | vncpasswd -f > "$VNC_DIR/passwd"
-    chmod 600 "$VNC_DIR/passwd"
-    echo "==> VNC password configured at $VNC_DIR/passwd"
+    # Create a simple VNC password file using Python (available in base image)
+    python3 -c "import sys; sys.stdout.buffer.write(b'$VNC_PASSWORD\n')" 2>/dev/null || echo "$VNC_PASSWORD" > "$VNC_DIR/passwd.txt"
+    chmod 600 "$VNC_DIR/passwd.txt" 2>/dev/null || true
+    echo "==> VNC password configured"
   else
     echo "WARNING: No VNC_PASSWORD set, VNC may not work properly"
   fi
@@ -137,8 +142,9 @@ if [ "$PTERODACTYL_MODE" = true ]; then
   
   # Start x11vnc on the configured port
   VNC_LOG="$HOME/x11vnc.log"
-  if [ -f "$VNC_DIR/passwd" ]; then
-    x11vnc -display :0 -forever -shared -rfbport "$VNC_PORT" -rfbauth "$VNC_DIR/passwd" -bg -o "$VNC_LOG" 2>&1
+  if [ -n "$VNC_PASSWORD" ]; then
+    # Use direct password option (simpler and more reliable)
+    x11vnc -display :0 -forever -shared -rfbport "$VNC_PORT" -passwd "$VNC_PASSWORD" -bg -o "$VNC_LOG" 2>&1
   else
     x11vnc -display :0 -forever -shared -rfbport "$VNC_PORT" -bg -o "$VNC_LOG" 2>&1
   fi
@@ -162,19 +168,33 @@ export DISPLAY="${DISPLAY:-:0}"
 export XAUTHORITY=~/.Xauthority
 TERM=
 
-# Modify the game launcher script
-GAME_LAUNCHER="/data/Stardew/Stardew Valley/StardewValley"
+# Start the game
+# In Pterodactyl mode, we need to work around the read-only filesystem
+# The key is to run the game from its original directory
+GAME_DIR="/data/Stardew/Stardew Valley"
+GAME_LAUNCHER="$GAME_DIR/StardewValley"
+
 if [ -w "$GAME_LAUNCHER" ] 2>/dev/null; then
   # Standard mode: modify in place
   sed -i -e 's/env TERM=xterm $LAUNCHER "$@"$/env SHELL=\/bin\/bash TERM=xterm xterm  -e "\/bin\/bash -c $LAUNCHER "$@""/' "$GAME_LAUNCHER"
   bash -c "$GAME_LAUNCHER"
 else
-  # Pterodactyl mode: copy to writable location and modify
-  WRITABLE_LAUNCHER="$HOME/StardewValley"
-  cp "$GAME_LAUNCHER" "$WRITABLE_LAUNCHER"
-  chmod +x "$WRITABLE_LAUNCHER"
-  sed -i -e 's/env TERM=xterm $LAUNCHER "$@"$/env SHELL=\/bin\/bash TERM=xterm xterm  -e "\/bin\/bash -c $LAUNCHER "$@""/' "$WRITABLE_LAUNCHER" 2>/dev/null || true
-  bash -c "$WRITABLE_LAUNCHER"
+  # Pterodactyl mode: run from original location with xterm wrapper
+  # Change to game directory so SMAPI can find files
+  cd "$GAME_DIR"
+  
+  # Create a modified launcher in writable location that preserves the working directory
+  WRAPPER_SCRIPT="$HOME/start_game.sh"
+  cat > "$WRAPPER_SCRIPT" << 'EOFWRAPPER'
+#!/bin/bash
+cd "/data/Stardew/Stardew Valley"
+export SHELL=/bin/bash
+export TERM=xterm
+exec xterm -e "/bin/bash -c '/data/Stardew/Stardew Valley/StardewModdingAPI'"
+EOFWRAPPER
+  
+  chmod +x "$WRAPPER_SCRIPT"
+  bash "$WRAPPER_SCRIPT"
 fi
 
 sleep 233333333333333
