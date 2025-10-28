@@ -227,6 +227,16 @@
             "user_editable": false,
             "rules": "required|integer|in:0,1",
             "field_type": "text"
+        },
+        {
+            "name": "Enable Console Input",
+            "description": "启用翼龙控制台输入模式。开启后可以直接在控制台输入SMAPI命令，但游戏窗口可能不稳定。关闭则需要通过VNC访问。",
+            "env_variable": "ENABLE_CONSOLE_INPUT",
+            "default_value": "false",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:true,false",
+            "field_type": "text"
         }
     ]
 }

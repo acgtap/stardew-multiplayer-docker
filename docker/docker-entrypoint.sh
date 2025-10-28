@@ -359,15 +359,23 @@ if [ -w "$GAME_LAUNCHER" ] 2>/dev/null; then
   sed -i -e 's/env TERM=xterm $LAUNCHER "$@"$/env SHELL=\/bin\/bash TERM=xterm xterm  -e "\/bin\/bash -c $LAUNCHER "$@""/' "$GAME_LAUNCHER"
   bash -c "$GAME_LAUNCHER"
 else
-  # Pterodactyl mode: run from writable location with xterm wrapper
+  # Pterodactyl mode: run from writable location
   # Change to game directory so SMAPI can find files
   cd "$GAME_DIR"
   
-  # Create a wrapper script that runs the game from the correct directory
-  WRAPPER_SCRIPT="$HOME/start_game.sh"
-  
-  # Use a different heredoc delimiter to avoid variable expansion issues
-  cat > "$WRAPPER_SCRIPT" <<EOF
+  # Check if we should use interactive mode (allow console input)
+  if [ "$ENABLE_CONSOLE_INPUT" = "true" ]; then
+    echo "==> 启用控制台输入模式 - 您可以在翼龙面板输入SMAPI命令"
+    # Run SMAPI directly without xterm to allow stdin/stdout
+    exec ./StardewModdingAPI
+  else
+    # Default mode: use xterm wrapper (no console input, but more stable)
+    echo "==> 使用 xterm 模式 - 控制台输入不可用，使用 VNC 或启用 ENABLE_CONSOLE_INPUT"
+    # Create a wrapper script that runs the game from the correct directory
+    WRAPPER_SCRIPT="$HOME/start_game.sh"
+    
+    # Use a different heredoc delimiter to avoid variable expansion issues
+    cat > "$WRAPPER_SCRIPT" <<EOF
 #!/bin/bash
 cd "$GAME_DIR"
 export SHELL=/bin/bash
@@ -382,9 +390,10 @@ export XDG_STATE_HOME="$XDG_STATE_HOME"
 # Start xterm which will run SMAPI
 exec xterm -e "/bin/bash -c 'cd \"$GAME_DIR\" && exec ./StardewModdingAPI'"
 EOF
-  
-  chmod +x "$WRAPPER_SCRIPT"
-  exec bash "$WRAPPER_SCRIPT"
+    
+    chmod +x "$WRAPPER_SCRIPT"
+    exec bash "$WRAPPER_SCRIPT"
+  fi
 fi
 
 sleep 233333333333333
