@@ -22,11 +22,10 @@ This guide explains how to deploy Stardew Valley multiplayer server on Pterodact
 2. Select the Stardew Valley egg you just imported
 3. Configure the server settings:
    - **Server Name**: Choose a name for your server
-   - **Allocations**: Pterodactyl will automatically assign ports
-   - The egg is configured with default ports:
-     - **Game Port**: 24642 (UDP) - Configurable in Startup tab
-     - **VNC Port**: 5900 (TCP) - Configurable in Startup tab
-     - **Web VNC Port**: 5800 (TCP) - Configurable in Startup tab
+   - **Allocations**: Assign at least 3 ports:
+     - One for the game (default: 24642/udp)
+     - One for VNC (default: 5900)
+     - One for Web VNC (default: 5800)
 4. Set resource limits (recommended minimum):
    - **Memory**: 2048 MB (4096 MB recommended)
    - **CPU**: 200% (2 cores)
@@ -35,11 +34,6 @@ This guide explains how to deploy Stardew Valley multiplayer server on Pterodact
 ### 3. Configure Server Variables
 
 After creating the server, you can configure various options through the server's **Startup** tab:
-
-#### Port Settings
-- **Game Port**: Port for the game server (default: `24642`)
-- **VNC Port**: Port for VNC server access (default: `5900`)
-- **Web VNC Port**: Port for browser-based VNC access (default: `5800`)
 
 #### Essential Settings
 - **VNC Password**: Password for VNC access (default: `nyanyanya`)
@@ -72,33 +66,17 @@ You can access these files through the Pterodactyl file manager or SFTP.
 ### 5. Initial Setup
 
 1. Start the server from the Pterodactyl panel
-2. The server will start on the configured ports (check console output for confirmation)
-3. Console output will show:
-   ```
-   ==> Started x11vnc on port 5900
-   ==> Started Web VNC on port 5800
-   ==> Game server port: 24642
-   ```
-4. Access the game via VNC:
+2. Access the game via VNC:
    - Use a VNC client (like TightVNC or RealVNC)
-   - Connect to: `your-server-ip:vnc-port` (default: 5900)
+   - Connect to: `your-server-ip:vnc-port`
    - Use the VNC password you set in the server variables
-5. Alternatively, use the Web VNC interface:
-   - Access: `http://your-server-ip:webvnc-port` (default: 5800)
+3. Alternatively, use the Web VNC interface:
+   - Access: `http://your-server-ip:web-vnc-port`
    - This provides a browser-based interface
-6. Create a new farm or load an existing save
-7. Once loaded, the AutoLoad mod will remember this save and automatically load it on future restarts
+4. Create a new farm or load an existing save
+5. Once loaded, the AutoLoad mod will remember this save and automatically load it on future restarts
 
 ## Troubleshooting
-
-### Port Configuration
-
-The ports are configurable in the **Startup** tab:
-- **Game Port**: Default 24642 (UDP)
-- **VNC Port**: Default 5900 (TCP)
-- **Web VNC Port**: Default 5800 (TCP)
-
-You can change these ports if needed for your Pterodactyl setup.
 
 ### Server Won't Start
 - Check the server console for error messages
@@ -106,12 +84,9 @@ You can change these ports if needed for your Pterodactyl setup.
 - Ensure sufficient memory is allocated (minimum 2GB)
 
 ### Can't Connect via VNC
-- Check the configured VNC port in the **Startup** tab (default: 5900)
-- Verify the VNC password is set correctly in **Startup** variables
-- Check the server console for "Started x11vnc on port XXXX" message
-- Try using the Web VNC interface as an alternative (default port: 5800)
-- If VNC services didn't start, try restarting the server
-- Ensure the ports are not blocked by firewall rules
+- Verify the VNC port is allocated and open
+- Check that the VNC password is set correctly
+- Try using the Web VNC interface as an alternative
 
 ### Save Files Not Persisting
 - Ensure the `/home/container` directory has proper permissions
