@@ -13,7 +13,7 @@
         "ghcr.mirrorify.net\/acgtap\/stardew-multiplayer-docker:latest": "ghcr.mirrorify.net\/acgtap\/stardew-multiplayer-docker:latest"
     },
     "file_denylist": [],
-    "startup": "\/startapp.sh",
+    "startup": "\/bin\/bash \/startapp.sh",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"SMAPI ready\"\r\n}",

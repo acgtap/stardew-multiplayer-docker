@@ -100,19 +100,40 @@ The ports are configurable in the **Startup** tab:
 
 You can change these ports if needed for your Pterodactyl setup.
 
+### s6-overlay 错误修复（重要）
+
+如果您看到 `s6-hiercopy: fatal: unable to copy hierarchy from /etc/s6/init/env to /var/run/s6/env-stage1` 错误：
+
+**解决方案：更新 Egg 配置**
+
+1. 在 Pterodactyl 管理面板中，进入 **Nests** → 找到 Stardew Valley Egg
+2. 点击编辑 Egg 配置
+3. 在 **Process Configuration** 部分，找到 **Startup** 字段
+4. 将启动命令从 `/startapp.sh` 改为：
+   ```
+   /bin/bash /startapp.sh
+   ```
+5. 保存配置
+6. 重新导入更新后的 `egg-stardew-valley.json` 文件（推荐），或手动修改
+
+**原因说明：**
+- 这个错误是因为基础镜像的 s6-overlay 在 Pterodactyl 环境中无法初始化
+- 使用 `/bin/bash` 直接运行脚本可以绕过 s6-overlay
+- 脚本会自动检测 Pterodactyl 模式并启动所有必需的服务（VNC、X11、游戏服务器）
+
+**验证修复：**
+重启服务器后，您应该看到：
+```
+==> Running in Pterodactyl mode - bypassing s6-overlay
+Pterodactyl deployment detected - using /home/container for saves
+==> Starting VNC services for Pterodactyl...
+==> Started x11vnc on port 5900
+```
+
 ### Server Won't Start
 - Check the server console for error messages
 - Verify that all required ports are allocated
 - Ensure sufficient memory is allocated (minimum 2GB)
-- **s6-overlay 错误修复**: 如果您看到 `s6-hiercopy: fatal: unable to copy hierarchy from /etc/s6/init/env to /var/run/s6/env-stage1` 错误：
-  - 这是由于 Pterodactyl 的文件系统限制导致的
-  - 请确保您使用的是最新版本的镜像（包含 s6-overlay 修复）
-  - 镜像已配置为使用 `/tmp/s6-runtime` 作为可写的替代目录
-  - 如果问题持续存在，请尝试重新构建镜像
-- **Note about s6-overlay warning**: If you see "s6-mkdir: warning: unable to mkdir /var/run/s6: Read-only file system", this can be safely ignored
-  - The server is configured to use `/tmp/s6-runtime` as a writable alternative
-  - The symlink `/var/run/s6 -> /tmp/s6-runtime` handles Pterodactyl's read-only filesystem restrictions
-  - This warning does not affect server functionality
 
 ### Can't Connect via VNC
 - Check the configured VNC port in the **Startup** tab (default: 5900)
