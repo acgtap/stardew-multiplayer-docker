@@ -254,19 +254,35 @@ if [ "$PTERODACTYL_MODE" = true ]; then
   if command -v websockify &> /dev/null; then
     WEBSOCKIFY_LOG="$HOME/websockify.log"
     
-    # Check if novnc web files exist
-    if [ ! -d "/usr/share/novnc" ]; then
-      echo "WARNING: /usr/share/novnc 目录不存在"
-      echo "==> 尝试不使用 --web 参数启动 websockify"
-      websockify --daemon --log-file="$WEBSOCKIFY_LOG" "$WEBVNC_PORT" "localhost:$VNC_PORT"
+    # Find noVNC web files in common locations
+    NOVNC_PATH=""
+    for path in /usr/share/novnc /usr/share/webapps/novnc /opt/novnc; do
+      if [ -d "$path" ]; then
+        NOVNC_PATH="$path"
+        echo "==> 找到 noVNC web 文件: $NOVNC_PATH"
+        break
+      fi
+    done
+    
+    # Start websockify with or without web files
+    if [ -n "$NOVNC_PATH" ]; then
+      websockify --daemon --log-file="$WEBSOCKIFY_LOG" --web "$NOVNC_PATH" "$WEBVNC_PORT" "localhost:$VNC_PORT"
     else
-      websockify --daemon --log-file="$WEBSOCKIFY_LOG" --web /usr/share/novnc "$WEBVNC_PORT" "localhost:$VNC_PORT"
+      echo "WARNING: 未找到 noVNC web 文件，启动纯 WebSocket 代理模式"
+      echo "         您需要使用 VNC 客户端连接到端口 $VNC_PORT"
+      websockify --daemon --log-file="$WEBSOCKIFY_LOG" "$WEBVNC_PORT" "localhost:$VNC_PORT"
     fi
     
     # Wait a moment and check if websockify started
     sleep 1
     if pgrep -f "websockify.*$WEBVNC_PORT" > /dev/null; then
-      echo "==> 启动 Web VNC on port $WEBVNC_PORT (log: $WEBSOCKIFY_LOG)"
+      if [ -n "$NOVNC_PATH" ]; then
+        echo "==> 启动 Web VNC on port $WEBVNC_PORT (浏览器访问)"
+        echo "    访问: http://服务器IP:$WEBVNC_PORT/vnc.html"
+      else
+        echo "==> 启动 WebSocket 代理 on port $WEBVNC_PORT"
+      fi
+      echo "    日志: $WEBSOCKIFY_LOG"
     else
       echo "ERROR: websockify 启动失败!"
       echo "==> websockify 日志:"
