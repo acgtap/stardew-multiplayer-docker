@@ -51,10 +51,12 @@ RUN chmod +x /data/Stardew/Stardew\ Valley/StardewValley && \
     mkdir -p /var/run && \
     chmod 777 /var/run && \
     rm -rf /var/run/s6 && \
+    mkdir -p /tmp/s6-runtime/env-stage1 /tmp/s6-runtime/env-stage2 && \
     ln -sf /tmp/s6-runtime /var/run/s6 && \
-    mkdir -p /tmp/s6-runtime/env-stage1 && \
     chmod -R 777 /tmp/s6-runtime && \
+    touch /tmp/s6-runtime/.placeholder && \
     mkdir -p /etc/s6/init/env && \
+    touch /etc/s6/init/env/.placeholder && \
     chmod -R 777 /etc/s6/init
 
 RUN mkdir /etc/services.d/utils && touch /etc/services.d/app/utils.dep
@@ -63,3 +65,9 @@ RUN chmod +x /etc/services.d/utils/run
 
 COPY docker-entrypoint.sh /startapp.sh
 RUN chmod +x /startapp.sh
+
+# For Pterodactyl: override the base image ENTRYPOINT to bypass s6-overlay
+# This is critical - the base image has an ENTRYPOINT that runs s6-overlay
+# We clear it so Pterodactyl can run /startapp.sh directly
+ENTRYPOINT []
+CMD ["/bin/bash", "/startapp.sh"]

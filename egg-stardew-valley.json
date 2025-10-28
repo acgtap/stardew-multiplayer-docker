@@ -13,7 +13,7 @@
         "ghcr.mirrorify.net\/acgtap\/stardew-multiplayer-docker:latest": "ghcr.mirrorify.net\/acgtap\/stardew-multiplayer-docker:latest"
     },
     "file_denylist": [],
-    "startup": "\/bin\/bash \/startapp.sh",
+    "startup": "\/startapp.sh",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"SMAPI ready\"\r\n}",
@@ -22,7 +22,7 @@
     },
     "scripts": {
         "installation": {
-            "script": "#!\/bin\/bash\r\n# Stardew Valley Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\n\r\nmkdir -p \/mnt\/server\r\ncd \/mnt\/server\r\n\r\necho \"Container already has game files - installation complete\"",
+            "script": "#!\/bin\/bash\r\n# Stardew Valley Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\necho \"Preparing server directories...\"\r\nmkdir -p \/mnt\/server\r\ncd \/mnt\/server\r\n\r\n# Create s6-overlay required directories to prevent initialization errors\r\necho \"Creating s6-overlay directories for Pterodactyl compatibility...\"\r\nmkdir -p \/tmp\/s6-runtime\/env-stage1\r\nmkdir -p \/tmp\/s6-runtime\/env-stage2\r\nmkdir -p \/etc\/s6\/init\/env 2>\/dev\/null || true\r\nchmod -R 777 \/tmp\/s6-runtime 2>\/dev\/null || true\r\n\r\necho \"Container already has game files - installation complete\"",
             "container": "ccr.ccs.tencentyun.com\/xingyue\/debian:debian",
             "entrypoint": "bash"
         }
