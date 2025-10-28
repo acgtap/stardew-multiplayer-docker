@@ -50,7 +50,12 @@ RUN chmod +x /data/Stardew/Stardew\ Valley/StardewValley && \
     chmod -R 777 /tmp/s6-runtime /tmp/.X11-unix && \
     mkdir -p /var/run && \
     chmod 777 /var/run && \
-    ln -sf /tmp/s6-runtime /var/run/s6
+    rm -rf /var/run/s6 && \
+    ln -sf /tmp/s6-runtime /var/run/s6 && \
+    mkdir -p /tmp/s6-runtime/env-stage1 && \
+    chmod -R 777 /tmp/s6-runtime && \
+    mkdir -p /etc/s6/init/env && \
+    chmod -R 777 /etc/s6/init
 
 RUN mkdir /etc/services.d/utils && touch /etc/services.d/app/utils.dep
 COPY run /etc/services.d/utils/run 

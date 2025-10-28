@@ -104,6 +104,11 @@ You can change these ports if needed for your Pterodactyl setup.
 - Check the server console for error messages
 - Verify that all required ports are allocated
 - Ensure sufficient memory is allocated (minimum 2GB)
+- **s6-overlay 错误修复**: 如果您看到 `s6-hiercopy: fatal: unable to copy hierarchy from /etc/s6/init/env to /var/run/s6/env-stage1` 错误：
+  - 这是由于 Pterodactyl 的文件系统限制导致的
+  - 请确保您使用的是最新版本的镜像（包含 s6-overlay 修复）
+  - 镜像已配置为使用 `/tmp/s6-runtime` 作为可写的替代目录
+  - 如果问题持续存在，请尝试重新构建镜像
 - **Note about s6-overlay warning**: If you see "s6-mkdir: warning: unable to mkdir /var/run/s6: Read-only file system", this can be safely ignored
   - The server is configured to use `/tmp/s6-runtime` as a writable alternative
   - The symlink `/var/run/s6 -> /tmp/s6-runtime` handles Pterodactyl's read-only filesystem restrictions

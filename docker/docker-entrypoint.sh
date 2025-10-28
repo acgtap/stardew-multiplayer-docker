@@ -12,12 +12,28 @@ export HOME=/config
 
 # Ensure s6-overlay runtime directory exists and is writable (for Pterodactyl compatibility)
 mkdir -p "${S6_RUNTIME_DIR:-/tmp/s6-runtime}"
-chmod 777 "${S6_RUNTIME_DIR:-/tmp/s6-runtime}" 2>/dev/null || true
+mkdir -p "${S6_RUNTIME_DIR:-/tmp/s6-runtime}/env-stage1"
+mkdir -p "${S6_RUNTIME_DIR:-/tmp/s6-runtime}/env-stage2"
+mkdir -p /etc/s6/init/env 2>/dev/null || true
+chmod -R 777 "${S6_RUNTIME_DIR:-/tmp/s6-runtime}" 2>/dev/null || true
+chmod -R 777 /etc/s6/init 2>/dev/null || true
 
 # For Pterodactyl: if /var/run/s6 doesn't exist or isn't a symlink, try to create it
 # This handles cases where /var/run is mounted read-only after image build
 if [ ! -e "/var/run/s6" ] && [ -w "/var/run" ] 2>/dev/null; then
+  rm -f /var/run/s6 2>/dev/null || true
   ln -sf /tmp/s6-runtime /var/run/s6 2>/dev/null || true
+elif [ -e "/var/run/s6" ] && [ ! -L "/var/run/s6" ]; then
+  # /var/run/s6 exists but is not a symlink, try to replace it
+  rm -rf /var/run/s6 2>/dev/null || true
+  ln -sf /tmp/s6-runtime /var/run/s6 2>/dev/null || true
+fi
+
+# Ensure the symlink target has the required directories
+if [ -L "/var/run/s6" ]; then
+  S6_TARGET=$(readlink -f /var/run/s6)
+  mkdir -p "$S6_TARGET/env-stage1" "$S6_TARGET/env-stage2" 2>/dev/null || true
+  chmod -R 777 "$S6_TARGET" 2>/dev/null || true
 fi
 
 # Create writable X11 socket directory
