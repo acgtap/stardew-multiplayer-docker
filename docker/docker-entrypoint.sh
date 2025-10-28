@@ -12,9 +12,6 @@ if [ -n "$P_SERVER_UUID" ] || [ ! -w "/var/run" ] 2>/dev/null; then
   pkill -9 s6-svscan 2>/dev/null || true
 fi
 
-# Install websockify
-echo "==> 安装websockify"
-apt-get update && apt-get install -y websockify
 
 # Note: HOME is set later based on deployment type (Pterodactyl vs standard)
 

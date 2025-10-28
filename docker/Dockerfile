@@ -15,7 +15,7 @@ ENV SERVER_DIR="/home/container" \
     S6_KEEP_ENV=1
 
 RUN apt-get update
-RUN apt-get install -y wget unzip tar strace mono-complete xterm gettext-base jq netcat procps xvfb x11vnc 
+RUN apt-get install -y wget unzip tar strace mono-complete xterm gettext-base jq netcat procps xvfb x11vnc websockify
 #RUN APP_ICON_URL=https://stardewcommunitywiki.com/mediawiki/images/4/48/Fiddlehead_Fern.png && \
 #    install_app_icon.sh "$APP_ICON_URL"
 
