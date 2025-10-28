@@ -1,6 +1,10 @@
 #!/bin/bash
 export HOME=/config
 
+# Ensure s6-overlay runtime directory exists and is writable (for Pterodactyl compatibility)
+mkdir -p "${S6_RUNTIME_DIR:-/tmp/s6-runtime}"
+chmod 777 "${S6_RUNTIME_DIR:-/tmp/s6-runtime}"
+
 # Support Pterodactyl deployment - use /home/container for saves if it exists and is writable
 if [ -d "/home/container" ] && [ -w "/home/container" ]; then
   echo "Pterodactyl deployment detected - using /home/container for saves"
