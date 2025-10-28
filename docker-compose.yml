@@ -1,5 +1,7 @@
 version: '2.2'
 
+# For Pterodactyl deployment, see PTERODACTYL.md and use egg-stardew-valley.json
+
 services:
   valley:
     build: docker
