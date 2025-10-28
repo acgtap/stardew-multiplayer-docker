@@ -12,7 +12,7 @@ if [ -n "$P_SERVER_UUID" ] || [ ! -w "/var/run" ] 2>/dev/null; then
   pkill -9 s6-svscan 2>/dev/null || true
 fi
 
-export HOME=/config
+# Note: HOME is set later based on deployment type (Pterodactyl vs standard)
 
 # Ensure s6-overlay runtime directory exists and is writable (for Pterodactyl compatibility)
 if [ "$PTERODACTYL_MODE" = false ]; then
@@ -50,11 +50,14 @@ if [ -d "/home/container" ] && [ -w "/home/container" ]; then
   export SAVE_DIR="/home/container/Saves"
   export CONFIG_BASE="/home/container"
   export LOG_DIR="/home/container/xdg/config/StardewValley/ErrorLogs"
+  # In Pterodactyl, override HOME to use writable directory
+  export HOME=/home/container
 else
   echo "Standard deployment - using /config for saves"
   export SAVE_DIR="/config/xdg/config/StardewValley/Saves"
   export CONFIG_BASE="/config"
   export LOG_DIR="/config/xdg/config/StardewValley/ErrorLogs"
+  export HOME=/config
 fi
 
 # Create save directory if it doesn't exist
@@ -70,32 +73,38 @@ if [ ! -d "/home/container" ] || [ ! -w "/home/container" ]; then
   fi
 fi
 
-for modPath in /data/Stardew/Stardew\ Valley/Mods/*/
-do
-  mod=$(basename "$modPath")
+# Only configure mods if filesystem is writable (skip for Pterodactyl)
+if [ -w "/data/Stardew/Stardew Valley/Mods/" ] 2>/dev/null; then
+  for modPath in /data/Stardew/Stardew\ Valley/Mods/*/
+  do
+    mod=$(basename "$modPath")
 
-  # Normalize mod name to uppercase and only characters, eg. "Always On Server" => ENABLE_ALWAYSONSERVER_MOD
-  var="ENABLE_$(echo "${mod^^}" | tr -cd '[A-Z]')_MOD"
+    # Normalize mod name to uppercase and only characters, eg. "Always On Server" => ENABLE_ALWAYSONSERVER_MOD
+    var="ENABLE_$(echo "${mod^^}" | tr -cd '[A-Z]')_MOD"
 
-  # Remove the mod if it's not enabled
-  if [ "${!var}" != "true" ]; then
-    echo "Removing ${modPath} (${var}=${!var})"
-    rm -rf "$modPath"
-    continue
-  fi
-
-  if [ -f "${modPath}/config.json.template" ]; then
-    echo "Configuring ${modPath}config.json"
-
-    # Seed the config.json only if one isn't manually mounted in (or is empty)
-    if [ "$(cat "${modPath}config.json" 2> /dev/null)" == "" ]; then
-      envsubst < "${modPath}config.json.template" > "${modPath}config.json"
+    # Remove the mod if it's not enabled
+    if [ "${!var}" != "true" ]; then
+      echo "Removing ${modPath} (${var}=${!var})"
+      rm -rf "$modPath"
+      continue
     fi
-  fi
-done
 
-# Run extra steps for certain mods
-/opt/configure-remotecontrol-mod.sh
+    if [ -f "${modPath}/config.json.template" ]; then
+      echo "Configuring ${modPath}config.json"
+
+      # Seed the config.json only if one isn't manually mounted in (or is empty)
+      if [ "$(cat "${modPath}config.json" 2> /dev/null)" == "" ]; then
+        envsubst < "${modPath}config.json.template" > "${modPath}config.json"
+      fi
+    fi
+  done
+
+  # Run extra steps for certain mods (only if writable)
+  /opt/configure-remotecontrol-mod.sh
+else
+  echo "==> Skipping mod configuration (read-only filesystem in Pterodactyl mode)"
+  echo "==> All mods will be loaded with default settings"
+fi
 
 # Start VNC services if in Pterodactyl mode
 if [ "$PTERODACTYL_MODE" = true ]; then
@@ -106,12 +115,13 @@ if [ "$PTERODACTYL_MODE" = true ]; then
   WEBVNC_PORT="${WEBVNC_PORT:-5800}"
   GAME_PORT="${GAME_PORT:-24642}"
   
-  # Set VNC password
-  mkdir -p /config/.vnc
+  # Set VNC password (use writable directory)
+  VNC_DIR="$HOME/.vnc"
+  mkdir -p "$VNC_DIR"
   if [ -n "$VNC_PASSWORD" ]; then
-    echo "$VNC_PASSWORD" | vncpasswd -f > /config/.vnc/passwd
-    chmod 600 /config/.vnc/passwd
-    echo "==> VNC password configured"
+    echo "$VNC_PASSWORD" | vncpasswd -f > "$VNC_DIR/passwd"
+    chmod 600 "$VNC_DIR/passwd"
+    echo "==> VNC password configured at $VNC_DIR/passwd"
   else
     echo "WARNING: No VNC_PASSWORD set, VNC may not work properly"
   fi
@@ -126,12 +136,13 @@ if [ "$PTERODACTYL_MODE" = true ]; then
   sleep 3
   
   # Start x11vnc on the configured port
-  if [ -f /config/.vnc/passwd ]; then
-    x11vnc -display :0 -forever -shared -rfbport "$VNC_PORT" -rfbauth /config/.vnc/passwd -bg -o /config/x11vnc.log
+  VNC_LOG="$HOME/x11vnc.log"
+  if [ -f "$VNC_DIR/passwd" ]; then
+    x11vnc -display :0 -forever -shared -rfbport "$VNC_PORT" -rfbauth "$VNC_DIR/passwd" -bg -o "$VNC_LOG" 2>&1
   else
-    x11vnc -display :0 -forever -shared -rfbport "$VNC_PORT" -bg -o /config/x11vnc.log
+    x11vnc -display :0 -forever -shared -rfbport "$VNC_PORT" -bg -o "$VNC_LOG" 2>&1
   fi
-  echo "==> Started x11vnc on port $VNC_PORT"
+  echo "==> Started x11vnc on port $VNC_PORT (log: $VNC_LOG)"
   
   # Start noVNC (web VNC) if available
   if command -v websockify &> /dev/null; then
@@ -150,8 +161,20 @@ export DISPLAY="${DISPLAY:-:0}"
 
 export XAUTHORITY=~/.Xauthority
 TERM=
-sed -i -e 's/env TERM=xterm $LAUNCHER "$@"$/env SHELL=\/bin\/bash TERM=xterm xterm  -e "\/bin\/bash -c $LAUNCHER "$@""/' /data/Stardew/Stardew\ Valley/StardewValley
 
-bash -c "/data/Stardew/Stardew\ Valley/StardewValley"
+# Modify the game launcher script
+GAME_LAUNCHER="/data/Stardew/Stardew Valley/StardewValley"
+if [ -w "$GAME_LAUNCHER" ] 2>/dev/null; then
+  # Standard mode: modify in place
+  sed -i -e 's/env TERM=xterm $LAUNCHER "$@"$/env SHELL=\/bin\/bash TERM=xterm xterm  -e "\/bin\/bash -c $LAUNCHER "$@""/' "$GAME_LAUNCHER"
+  bash -c "$GAME_LAUNCHER"
+else
+  # Pterodactyl mode: copy to writable location and modify
+  WRITABLE_LAUNCHER="$HOME/StardewValley"
+  cp "$GAME_LAUNCHER" "$WRITABLE_LAUNCHER"
+  chmod +x "$WRITABLE_LAUNCHER"
+  sed -i -e 's/env TERM=xterm $LAUNCHER "$@"$/env SHELL=\/bin\/bash TERM=xterm xterm  -e "\/bin\/bash -c $LAUNCHER "$@""/' "$WRITABLE_LAUNCHER" 2>/dev/null || true
+  bash -c "$WRITABLE_LAUNCHER"
+fi
 
 sleep 233333333333333
