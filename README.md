@@ -1,4 +1,4 @@
-# Stardew Valley Multiplayer Docker Compose
+# Stardew Valley Multiplayer Docker
 
 This project aims to autostart a Stardew Valley Multiplayer Server as easy as possible.
 
@@ -9,6 +9,17 @@ This project aims to autostart a Stardew Valley Multiplayer Server as easy as po
    - You will always get the most recent version with the fork at https://github.com/norimicry/stardew-multiplayer-docker
      
  - Ansible and Terraform will not be supported anymore
+
+## Deployment Options
+
+This server supports two deployment methods:
+
+### Docker Compose (Traditional)
+Standard Docker Compose deployment for self-hosted environments.
+
+### Pterodactyl Panel
+Deploy on Pterodactyl game server panel with a pre-configured egg.
+See [PTERODACTYL.md](PTERODACTYL.md) for detailed instructions.
 
 ## Setup
 

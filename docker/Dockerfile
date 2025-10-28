@@ -4,6 +4,10 @@ FROM jlesage/baseimage-gui:debian-10
 # Set the name of the application.
 ENV APP_NAME="StardewValley"
 
+# Support both regular Docker and Pterodactyl deployments
+ENV SERVER_DIR="/home/container" \
+    CONFIG_DIR="/config"
+
 RUN apt-get update
 RUN apt-get install -y wget unzip tar strace mono-complete xterm gettext-base jq netcat procps 
 #RUN APP_ICON_URL=https://stardewcommunitywiki.com/mediawiki/images/4/48/Fiddlehead_Fern.png && \
@@ -33,7 +37,9 @@ COPY scripts/ /opt/
 RUN chmod +x /data/Stardew/Stardew\ Valley/StardewValley && \
     chmod -R 777 /data/Stardew/ && \
     chown -R 1000:1000 /data/Stardew && \
-    chmod +x /opt/*.sh
+    chmod +x /opt/*.sh && \
+    mkdir -p /home/container && \
+    chmod -R 777 /home/container
 
 RUN mkdir /etc/services.d/utils && touch /etc/services.d/app/utils.dep
 COPY run /etc/services.d/utils/run 
