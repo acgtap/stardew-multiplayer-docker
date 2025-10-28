@@ -75,6 +75,11 @@ done
 if [ "$PTERODACTYL_MODE" = true ]; then
   echo "==> Starting VNC services for Pterodactyl..."
   
+  # Set default ports if not provided
+  VNC_PORT="${VNC_PORT:-5900}"
+  WEBVNC_PORT="${WEBVNC_PORT:-5800}"
+  GAME_PORT="${GAME_PORT:-24642}"
+  
   # Set VNC password
   mkdir -p /config/.vnc
   if [ -n "$VNC_PASSWORD" ]; then
@@ -94,21 +99,21 @@ if [ "$PTERODACTYL_MODE" = true ]; then
   # Wait for X server to be ready
   sleep 3
   
-  # Start x11vnc
+  # Start x11vnc on the configured port
   if [ -f /config/.vnc/passwd ]; then
-    x11vnc -display :0 -forever -shared -rfbport 5900 -rfbauth /config/.vnc/passwd -bg -o /config/x11vnc.log
+    x11vnc -display :0 -forever -shared -rfbport "$VNC_PORT" -rfbauth /config/.vnc/passwd -bg -o /config/x11vnc.log
   else
-    x11vnc -display :0 -forever -shared -rfbport 5900 -bg -o /config/x11vnc.log
+    x11vnc -display :0 -forever -shared -rfbport "$VNC_PORT" -bg -o /config/x11vnc.log
   fi
-  echo "==> Started x11vnc on port 5900 (internal)"
-  echo "==> Check Pterodactyl Network tab for external VNC port"
+  echo "==> Started x11vnc on port $VNC_PORT"
   
   # Start noVNC (web VNC) if available
   if command -v websockify &> /dev/null; then
-    websockify --web /usr/share/novnc 5800 localhost:5900 &>/dev/null &
-    echo "==> Started Web VNC on port 5800 (internal)"
-    echo "==> Check Pterodactyl Network tab for external Web VNC port"
+    websockify --web /usr/share/novnc "$WEBVNC_PORT" "localhost:$VNC_PORT" &>/dev/null &
+    echo "==> Started Web VNC on port $WEBVNC_PORT"
   fi
+  
+  echo "==> Game server port: $GAME_PORT"
 fi
 
 /opt/tail-smapi-log.sh &

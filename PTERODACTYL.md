@@ -22,11 +22,11 @@ This guide explains how to deploy Stardew Valley multiplayer server on Pterodact
 2. Select the Stardew Valley egg you just imported
 3. Configure the server settings:
    - **Server Name**: Choose a name for your server
-   - **Allocations**: Assign **3 ports** (required):
-     - **Primary Port**: Game server (default: 24642/udp) - This will be auto-assigned as the main allocation
-     - **Additional Port 1**: VNC server (default: 5900/tcp) - For VNC client access
-     - **Additional Port 2**: Web VNC (default: 5800/tcp) - For browser-based VNC access
-   - **Important**: Make sure to add 2 additional port allocations beyond the primary port
+   - **Allocations**: Pterodactyl will automatically assign ports
+   - The egg is configured with default ports:
+     - **Game Port**: 24642 (UDP) - Configurable in Startup tab
+     - **VNC Port**: 5900 (TCP) - Configurable in Startup tab
+     - **Web VNC Port**: 5800 (TCP) - Configurable in Startup tab
 4. Set resource limits (recommended minimum):
    - **Memory**: 2048 MB (4096 MB recommended)
    - **CPU**: 200% (2 cores)
@@ -35,6 +35,11 @@ This guide explains how to deploy Stardew Valley multiplayer server on Pterodact
 ### 3. Configure Server Variables
 
 After creating the server, you can configure various options through the server's **Startup** tab:
+
+#### Port Settings
+- **Game Port**: Port for the game server (default: `24642`)
+- **VNC Port**: Port for VNC server access (default: `5900`)
+- **Web VNC Port**: Port for browser-based VNC access (default: `5800`)
 
 #### Essential Settings
 - **VNC Password**: Password for VNC access (default: `nyanyanya`)
@@ -67,35 +72,33 @@ You can access these files through the Pterodactyl file manager or SFTP.
 ### 5. Initial Setup
 
 1. Start the server from the Pterodactyl panel
-2. Wait for the server to start (you should see "Started x11vnc on port 5900" and "SMAPI ready" in the console)
-3. Find your VNC port:
-   - Go to your server's **Network** tab in Pterodactyl
-   - Look for the port allocation labeled for VNC (the second port after the game port)
-   - This is the external port you'll use to connect
+2. The server will start on the configured ports (check console output for confirmation)
+3. Console output will show:
+   ```
+   ==> Started x11vnc on port 5900
+   ==> Started Web VNC on port 5800
+   ==> Game server port: 24642
+   ```
 4. Access the game via VNC:
    - Use a VNC client (like TightVNC or RealVNC)
-   - Connect to: `your-server-ip:vnc-external-port`
+   - Connect to: `your-server-ip:vnc-port` (default: 5900)
    - Use the VNC password you set in the server variables
 5. Alternatively, use the Web VNC interface:
-   - Find the Web VNC port (third port) in the **Network** tab
-   - Access: `http://your-server-ip:web-vnc-external-port`
+   - Access: `http://your-server-ip:webvnc-port` (default: 5800)
    - This provides a browser-based interface
 6. Create a new farm or load an existing save
 7. Once loaded, the AutoLoad mod will remember this save and automatically load it on future restarts
 
 ## Troubleshooting
 
-### Finding VNC Ports
+### Port Configuration
 
-The VNC ports in Pterodactyl are dynamically assigned:
+The ports are configurable in the **Startup** tab:
+- **Game Port**: Default 24642 (UDP)
+- **VNC Port**: Default 5900 (TCP)
+- **Web VNC Port**: Default 5800 (TCP)
 
-1. Go to your server's **Network** tab
-2. You'll see multiple port allocations:
-   - **Primary Allocation**: Game server port (UDP)
-   - **Additional Allocation 1**: VNC port (TCP) - typically 5900 internally
-   - **Additional Allocation 2**: Web VNC port (TCP) - typically 5800 internally
-3. The external ports shown in the Network tab are what you use to connect
-4. Example: If the Network tab shows `192.168.1.100:25565` for VNC, connect to `192.168.1.100:25565` with your VNC client
+You can change these ports if needed for your Pterodactyl setup.
 
 ### Server Won't Start
 - Check the server console for error messages
@@ -103,12 +106,12 @@ The VNC ports in Pterodactyl are dynamically assigned:
 - Ensure sufficient memory is allocated (minimum 2GB)
 
 ### Can't Connect via VNC
-- Verify the VNC port is allocated in the **Network** tab
-- Check that the VNC password is set correctly in **Startup** variables
-- Ensure you're using the external port shown in the Network tab, not the internal port
-- Check the server console for "Started x11vnc on port 5900" message
-- Try using the Web VNC interface as an alternative
+- Check the configured VNC port in the **Startup** tab (default: 5900)
+- Verify the VNC password is set correctly in **Startup** variables
+- Check the server console for "Started x11vnc on port XXXX" message
+- Try using the Web VNC interface as an alternative (default port: 5800)
 - If VNC services didn't start, try restarting the server
+- Ensure the ports are not blocked by firewall rules
 
 ### Save Files Not Persisting
 - Ensure the `/home/container` directory has proper permissions

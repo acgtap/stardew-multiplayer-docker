@@ -7,7 +7,7 @@
   "exported_at": "2025-10-28T05:24:00+00:00",
   "name": "Stardew Valley",
   "author": "support@pterodactyl.io",
-  "description": "Stardew Valley multiplayer server with SMAPI mod loader and VNC support. Requires 3 port allocations: Game (24642/udp), VNC (5900/tcp), Web VNC (5800/tcp).",
+  "description": "Stardew Valley multiplayer server with SMAPI mod loader and VNC support. Configure game, VNC, and Web VNC ports in the startup variables.",
   "features": null,
   "docker_images": {
     "ghcr.io/acgtap/stardew-multiplayer-docker:latest": "ghcr.io/acgtap/stardew-multiplayer-docker:latest"
@@ -28,6 +28,36 @@
     }
   },
   "variables": [
+    {
+      "name": "Game Port",
+      "description": "Port for the game server (UDP)",
+      "env_variable": "GAME_PORT",
+      "default_value": "24642",
+      "user_viewable": true,
+      "user_editable": false,
+      "rules": "required|integer|between:1024,65535",
+      "field_type": "text"
+    },
+    {
+      "name": "VNC Port",
+      "description": "Port for VNC server access (TCP)",
+      "env_variable": "VNC_PORT",
+      "default_value": "5900",
+      "user_viewable": true,
+      "user_editable": false,
+      "rules": "required|integer|between:1024,65535",
+      "field_type": "text"
+    },
+    {
+      "name": "Web VNC Port",
+      "description": "Port for browser-based VNC access (TCP)",
+      "env_variable": "WEBVNC_PORT",
+      "default_value": "5800",
+      "user_viewable": true,
+      "user_editable": false,
+      "rules": "required|integer|between:1024,65535",
+      "field_type": "text"
+    },
     {
       "name": "VNC Password",
       "description": "Password for VNC access to the server",
