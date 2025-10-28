@@ -1,182 +1,182 @@
 {
-  "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
-  "meta": {
-    "version": "PTDL_v2",
-    "update_url": null
-  },
-  "exported_at": "2025-10-28T05:24:00+00:00",
-  "name": "Stardew Valley",
-  "author": "support@pterodactyl.io",
-  "description": "Stardew Valley multiplayer server with SMAPI mod loader and VNC support. Configure game, VNC, and Web VNC ports in the startup variables.",
-  "features": null,
-  "docker_images": {
-    "ghcr.io/acgtap/stardew-multiplayer-docker:latest": "ghcr.io/acgtap/stardew-multiplayer-docker:latest"
-  },
-  "file_denylist": [],
-  "startup": "/startapp.sh",
-  "config": {
-    "files": "{}",
-    "startup": "{\r\n    \"done\": \"SMAPI ready\"\r\n}",
-    "logs": "{}",
-    "stop": "^C"
-  },
-  "scripts": {
-    "installation": {
-      "script": "#!/bin/bash\r\n# Stardew Valley Installation Script\r\n#\r\n# Server Files: /mnt/server\r\napt update\r\napt install -y curl file unzip\r\n\r\nmkdir -p /mnt/server\r\ncd /mnt/server\r\n\r\necho \"Container already has game files - installation complete\"",
-      "container": "ghcr.io/pterodactyl/installers:debian",
-      "entrypoint": "bash"
-    }
-  },
-  "variables": [
-    {
-      "name": "Game Port",
-      "description": "Port for the game server (UDP)",
-      "env_variable": "GAME_PORT",
-      "default_value": "24642",
-      "user_viewable": true,
-      "user_editable": false,
-      "rules": "required|integer|between:1024,65535",
-      "field_type": "text"
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
     },
-    {
-      "name": "VNC Port",
-      "description": "Port for VNC server access (TCP)",
-      "env_variable": "VNC_PORT",
-      "default_value": "5900",
-      "user_viewable": true,
-      "user_editable": false,
-      "rules": "required|integer|between:1024,65535",
-      "field_type": "text"
+    "exported_at": "2025-10-28T16:00:41+08:00",
+    "name": "Stardew Valley vnc2",
+    "author": "support@pterodactyl.io",
+    "description": "Stardew Valley multiplayer server with SMAPI mod loader and VNC support. Configure game, VNC, and Web VNC ports in the startup variables.",
+    "features": null,
+    "docker_images": {
+        "ghcr.mirrorify.net\/acgtap\/stardew-multiplayer-docker:latest": "ghcr.mirrorify.net\/acgtap\/stardew-multiplayer-docker:latest"
     },
-    {
-      "name": "Web VNC Port",
-      "description": "Port for browser-based VNC access (TCP)",
-      "env_variable": "WEBVNC_PORT",
-      "default_value": "5800",
-      "user_viewable": true,
-      "user_editable": false,
-      "rules": "required|integer|between:1024,65535",
-      "field_type": "text"
+    "file_denylist": [],
+    "startup": "\/startapp.sh",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"SMAPI ready\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
     },
-    {
-      "name": "VNC Password",
-      "description": "Password for VNC access to the server",
-      "env_variable": "VNC_PASSWORD",
-      "default_value": "nyanyanya",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string|max:64",
-      "field_type": "text"
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/bash\r\n# Stardew Valley Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\n\r\nmkdir -p \/mnt\/server\r\ncd \/mnt\/server\r\n\r\necho \"Container already has game files - installation complete\"",
+            "container": "ccr.ccs.tencentyun.com\/xingyue\/debian:debian",
+            "entrypoint": "bash"
+        }
     },
-    {
-      "name": "Display Width",
-      "description": "Width of the display for VNC",
-      "env_variable": "DISPLAY_WIDTH",
-      "default_value": "1200",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|integer|min:800|max:3840",
-      "field_type": "text"
-    },
-    {
-      "name": "Display Height",
-      "description": "Height of the display for VNC",
-      "env_variable": "DISPLAY_HEIGHT",
-      "default_value": "900",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|integer|min:600|max:2160",
-      "field_type": "text"
-    },
-    {
-      "name": "Enable Always On Server",
-      "description": "Enable the Always On Server mod",
-      "env_variable": "ENABLE_ALWAYSONSERVER_MOD",
-      "default_value": "true",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string|in:true,false",
-      "field_type": "text"
-    },
-    {
-      "name": "Enable Unlimited Players",
-      "description": "Enable the Unlimited Players mod",
-      "env_variable": "ENABLE_UNLIMITEDPLAYERS_MOD",
-      "default_value": "true",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string|in:true,false",
-      "field_type": "text"
-    },
-    {
-      "name": "Player Limit",
-      "description": "Maximum number of players allowed",
-      "env_variable": "UNLIMITED_PLAYERS_PLAYER_LIMIT",
-      "default_value": "10",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|integer|min:1|max:100",
-      "field_type": "text"
-    },
-    {
-      "name": "Enable Auto Load Game",
-      "description": "Enable the Auto Load Game mod",
-      "env_variable": "ENABLE_AUTOLOADGAME_MOD",
-      "default_value": "true",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string|in:true,false",
-      "field_type": "text"
-    },
-    {
-      "name": "Auto Load Last File",
-      "description": "Automatically load the last played save file",
-      "env_variable": "AUTO_LOAD_GAME_LAST_FILE_LOADED",
-      "default_value": "null",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "nullable|string|max:128",
-      "field_type": "text"
-    },
-    {
-      "name": "Load Into Multiplayer",
-      "description": "Automatically load into multiplayer mode",
-      "env_variable": "AUTO_LOAD_GAME_LOAD_INTO_MULTIPLAYER",
-      "default_value": "true",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string|in:true,false",
-      "field_type": "text"
-    },
-    {
-      "name": "Enable Remote Control",
-      "description": "Enable the Remote Control mod",
-      "env_variable": "ENABLE_REMOTECONTROL_MOD",
-      "default_value": "true",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string|in:true,false",
-      "field_type": "text"
-    },
-    {
-      "name": "Enable Save Backup",
-      "description": "Enable automatic save backups",
-      "env_variable": "ENABLE_SAVEBACKUP_MOD",
-      "default_value": "true",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string|in:true,false",
-      "field_type": "text"
-    },
-    {
-      "name": "Time of Day to Sleep",
-      "description": "What time the server should automatically sleep (24-hour format, e.g., 2200 for 10 PM)",
-      "env_variable": "ALWAYS_ON_SERVER_TIME_OF_DAY_TO_SLEEP",
-      "default_value": "2200",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|integer|min:600|max:2600",
-      "field_type": "text"
-    }
-  ]
+    "variables": [
+        {
+            "name": "Game Port",
+            "description": "Port for the game server (UDP)",
+            "env_variable": "GAME_PORT",
+            "default_value": "24642",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "required|integer|between:1024,65535",
+            "field_type": "text"
+        },
+        {
+            "name": "VNC Port",
+            "description": "Port for VNC server access (TCP)",
+            "env_variable": "VNC_PORT",
+            "default_value": "5900",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "required|integer|between:1024,65535",
+            "field_type": "text"
+        },
+        {
+            "name": "Web VNC Port",
+            "description": "Port for browser-based VNC access (TCP)",
+            "env_variable": "WEBVNC_PORT",
+            "default_value": "5800",
+            "user_viewable": true,
+            "user_editable": false,
+            "rules": "required|integer|between:1024,65535",
+            "field_type": "text"
+        },
+        {
+            "name": "VNC Password",
+            "description": "Password for VNC access to the server",
+            "env_variable": "VNC_PASSWORD",
+            "default_value": "nyanyanya",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Display Width",
+            "description": "Width of the display for VNC",
+            "env_variable": "DISPLAY_WIDTH",
+            "default_value": "1200",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|min:800|max:3840",
+            "field_type": "text"
+        },
+        {
+            "name": "Display Height",
+            "description": "Height of the display for VNC",
+            "env_variable": "DISPLAY_HEIGHT",
+            "default_value": "900",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|min:600|max:2160",
+            "field_type": "text"
+        },
+        {
+            "name": "Enable Always On Server",
+            "description": "Enable the Always On Server mod",
+            "env_variable": "ENABLE_ALWAYSONSERVER_MOD",
+            "default_value": "true",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:true,false",
+            "field_type": "text"
+        },
+        {
+            "name": "Enable Unlimited Players",
+            "description": "Enable the Unlimited Players mod",
+            "env_variable": "ENABLE_UNLIMITEDPLAYERS_MOD",
+            "default_value": "true",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:true,false",
+            "field_type": "text"
+        },
+        {
+            "name": "Player Limit",
+            "description": "Maximum number of players allowed",
+            "env_variable": "UNLIMITED_PLAYERS_PLAYER_LIMIT",
+            "default_value": "10",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|min:1|max:100",
+            "field_type": "text"
+        },
+        {
+            "name": "Enable Auto Load Game",
+            "description": "Enable the Auto Load Game mod",
+            "env_variable": "ENABLE_AUTOLOADGAME_MOD",
+            "default_value": "true",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:true,false",
+            "field_type": "text"
+        },
+        {
+            "name": "Auto Load Last File",
+            "description": "Automatically load the last played save file",
+            "env_variable": "AUTO_LOAD_GAME_LAST_FILE_LOADED",
+            "default_value": "null",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:128",
+            "field_type": "text"
+        },
+        {
+            "name": "Load Into Multiplayer",
+            "description": "Automatically load into multiplayer mode",
+            "env_variable": "AUTO_LOAD_GAME_LOAD_INTO_MULTIPLAYER",
+            "default_value": "true",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:true,false",
+            "field_type": "text"
+        },
+        {
+            "name": "Enable Remote Control",
+            "description": "Enable the Remote Control mod",
+            "env_variable": "ENABLE_REMOTECONTROL_MOD",
+            "default_value": "true",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:true,false",
+            "field_type": "text"
+        },
+        {
+            "name": "Enable Save Backup",
+            "description": "Enable automatic save backups",
+            "env_variable": "ENABLE_SAVEBACKUP_MOD",
+            "default_value": "true",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:true,false",
+            "field_type": "text"
+        },
+        {
+            "name": "Time of Day to Sleep",
+            "description": "What time the server should automatically sleep (24-hour format, e.g., 2200 for 10 PM)",
+            "env_variable": "ALWAYS_ON_SERVER_TIME_OF_DAY_TO_SLEEP",
+            "default_value": "2200",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|min:600|max:2600",
+            "field_type": "text"
+        }
+    ]
 }
