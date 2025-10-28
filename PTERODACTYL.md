@@ -104,7 +104,10 @@ You can change these ports if needed for your Pterodactyl setup.
 - Check the server console for error messages
 - Verify that all required ports are allocated
 - Ensure sufficient memory is allocated (minimum 2GB)
-- **Note**: The warning "s6-mkdir: warning: unable to mkdir /var/run/s6: Read-only file system" can be safely ignored. The server uses `/tmp/s6-runtime` as a writable alternative and the symlink `/var/run/s6 -> /tmp/s6-runtime` is configured to handle Pterodactyl's read-only filesystem restrictions
+- **Note about s6-overlay warning**: If you see "s6-mkdir: warning: unable to mkdir /var/run/s6: Read-only file system", this can be safely ignored
+  - The server is configured to use `/tmp/s6-runtime` as a writable alternative
+  - The symlink `/var/run/s6 -> /tmp/s6-runtime` handles Pterodactyl's read-only filesystem restrictions
+  - This warning does not affect server functionality
 
 ### Can't Connect via VNC
 - Check the configured VNC port in the **Startup** tab (default: 5900)
