@@ -238,10 +238,40 @@ if [ "$PTERODACTYL_MODE" = true ]; then
   fi
   echo "==> 启动 x11vnc on port $VNC_PORT (log: $VNC_LOG)"
   
+  # Wait for x11vnc to be ready
+  sleep 2
+  
+  # Verify x11vnc is running
+  if pgrep -x x11vnc > /dev/null; then
+    echo "==> x11vnc 进程运行正常"
+  else
+    echo "WARNING: x11vnc 进程未找到!"
+    echo "==> x11vnc 日志:"
+    tail -20 "$VNC_LOG" 2>/dev/null || echo "无法读取日志"
+  fi
+  
   # Start noVNC (web VNC) if available
   if command -v websockify &> /dev/null; then
-    websockify --web /usr/share/novnc "$WEBVNC_PORT" "localhost:$VNC_PORT" &>/dev/null &
-    echo "==> 启动 Web VNC on port $WEBVNC_PORT"
+    WEBSOCKIFY_LOG="$HOME/websockify.log"
+    
+    # Check if novnc web files exist
+    if [ ! -d "/usr/share/novnc" ]; then
+      echo "WARNING: /usr/share/novnc 目录不存在"
+      echo "==> 尝试不使用 --web 参数启动 websockify"
+      websockify --daemon --log-file="$WEBSOCKIFY_LOG" "$WEBVNC_PORT" "localhost:$VNC_PORT"
+    else
+      websockify --daemon --log-file="$WEBSOCKIFY_LOG" --web /usr/share/novnc "$WEBVNC_PORT" "localhost:$VNC_PORT"
+    fi
+    
+    # Wait a moment and check if websockify started
+    sleep 1
+    if pgrep -f "websockify.*$WEBVNC_PORT" > /dev/null; then
+      echo "==> 启动 Web VNC on port $WEBVNC_PORT (log: $WEBSOCKIFY_LOG)"
+    else
+      echo "ERROR: websockify 启动失败!"
+      echo "==> websockify 日志:"
+      cat "$WEBSOCKIFY_LOG" 2>/dev/null || echo "无法读取日志"
+    fi
   else
     echo "==> 未找到websockify, Web VNC不可用"
   fi
