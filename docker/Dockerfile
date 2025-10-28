@@ -7,10 +7,12 @@ ENV APP_NAME="StardewValley"
 # Support both regular Docker and Pterodactyl deployments
 ENV SERVER_DIR="/home/container" \
     CONFIG_DIR="/config" \
-    S6_RUNTIME_DIR="/tmp/s6-runtime"
+    S6_RUNTIME_DIR="/tmp/s6-runtime" \
+    S6_READ_ONLY_ROOT=1 \
+    S6_BEHAVIOUR_IF_STAGE2_FAILS=2
 
 RUN apt-get update
-RUN apt-get install -y wget unzip tar strace mono-complete xterm gettext-base jq netcat procps 
+RUN apt-get install -y wget unzip tar strace mono-complete xterm gettext-base jq netcat procps xvfb x11vnc 
 #RUN APP_ICON_URL=https://stardewcommunitywiki.com/mediawiki/images/4/48/Fiddlehead_Fern.png && \
 #    install_app_icon.sh "$APP_ICON_URL"
 
@@ -40,7 +42,9 @@ RUN chmod +x /data/Stardew/Stardew\ Valley/StardewValley && \
     chown -R 1000:1000 /data/Stardew && \
     chmod +x /opt/*.sh && \
     mkdir -p /home/container && \
-    chmod -R 777 /home/container
+    chmod -R 777 /home/container && \
+    mkdir -p /tmp/s6-runtime /tmp/.X11-unix && \
+    chmod -R 777 /tmp/s6-runtime /tmp/.X11-unix
 
 RUN mkdir /etc/services.d/utils && touch /etc/services.d/app/utils.dep
 COPY run /etc/services.d/utils/run 
