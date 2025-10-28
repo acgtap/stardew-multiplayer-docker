@@ -2,8 +2,10 @@
 
 echo "-- SMAPI Log: Starting"
 
-# Support both standard and Pterodactyl deployments
-if [ -d "/home/container" ] && [ -w "/home/container" ]; then
+# Use LOG_DIR from environment if set, otherwise detect deployment type
+if [ -n "$LOG_DIR" ]; then
+  LOG_PATH="$LOG_DIR/SMAPI-latest.txt"
+elif [ -d "/home/container" ] && [ -w "/home/container" ]; then
   LOG_PATH="/home/container/xdg/config/StardewValley/ErrorLogs/SMAPI-latest.txt"
 else
   LOG_PATH="/config/xdg/config/StardewValley/ErrorLogs/SMAPI-latest.txt"
