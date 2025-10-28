@@ -14,6 +14,12 @@ export HOME=/config
 mkdir -p "${S6_RUNTIME_DIR:-/tmp/s6-runtime}"
 chmod 777 "${S6_RUNTIME_DIR:-/tmp/s6-runtime}" 2>/dev/null || true
 
+# For Pterodactyl: if /var/run/s6 doesn't exist or isn't a symlink, try to create it
+# This handles cases where /var/run is mounted read-only after image build
+if [ ! -e "/var/run/s6" ] && [ -w "/var/run" ] 2>/dev/null; then
+  ln -sf /tmp/s6-runtime /var/run/s6 2>/dev/null || true
+fi
+
 # Create writable X11 socket directory
 mkdir -p /tmp/.X11-unix
 chmod 777 /tmp/.X11-unix 2>/dev/null || true

@@ -5,11 +5,14 @@ FROM jlesage/baseimage-gui:debian-11
 ENV APP_NAME="StardewValley"
 
 # Support both regular Docker and Pterodactyl deployments
+# Configure s6-overlay to use writable directories for Pterodactyl compatibility
 ENV SERVER_DIR="/home/container" \
     CONFIG_DIR="/config" \
     S6_RUNTIME_DIR="/tmp/s6-runtime" \
     S6_READ_ONLY_ROOT=1 \
-    S6_BEHAVIOUR_IF_STAGE2_FAILS=2
+    S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
+    S6_LOGGING=0 \
+    S6_KEEP_ENV=1
 
 RUN apt-get update
 RUN apt-get install -y wget unzip tar strace mono-complete xterm gettext-base jq netcat procps xvfb x11vnc 
@@ -44,7 +47,10 @@ RUN chmod +x /data/Stardew/Stardew\ Valley/StardewValley && \
     mkdir -p /home/container && \
     chmod -R 777 /home/container && \
     mkdir -p /tmp/s6-runtime /tmp/.X11-unix && \
-    chmod -R 777 /tmp/s6-runtime /tmp/.X11-unix
+    chmod -R 777 /tmp/s6-runtime /tmp/.X11-unix && \
+    mkdir -p /var/run && \
+    chmod 777 /var/run && \
+    ln -sf /tmp/s6-runtime /var/run/s6
 
 RUN mkdir /etc/services.d/utils && touch /etc/services.d/app/utils.dep
 COPY run /etc/services.d/utils/run 
