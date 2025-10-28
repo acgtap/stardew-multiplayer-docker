@@ -253,6 +253,7 @@ if [ "$PTERODACTYL_MODE" = true ]; then
   if [ -n "$VNC_PASSWORD" ]; then
     # Create a simple VNC password file using Python (available in base image)
     python3 -c "import sys; sys.stdout.buffer.write(b'$VNC_PASSWORD\n')" 2>/dev/null || echo "$VNC_PASSWORD" > "$VNC_DIR/passwd.txt"
+    echo "VNC密码: $VNC_PASSWORD"
     chmod 600 "$VNC_DIR/passwd.txt" 2>/dev/null || true
     echo "==> VNC 密码 配置成功"
   else
