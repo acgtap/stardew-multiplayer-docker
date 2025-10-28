@@ -177,6 +177,56 @@
             "user_editable": true,
             "rules": "required|integer|min:600|max:2600",
             "field_type": "text"
+        },
+        {
+            "name": "S6 Runtime Directory",
+            "description": "Directory for s6-overlay runtime files (should be writable)",
+            "env_variable": "S6_RUNTIME_DIR",
+            "default_value": "/tmp/s6-runtime",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "required|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "S6 Read Only Root",
+            "description": "Allow s6-overlay to work with read-only root filesystem",
+            "env_variable": "S6_READ_ONLY_ROOT",
+            "default_value": "1",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "required|integer|in:0,1",
+            "field_type": "text"
+        },
+        {
+            "name": "S6 Behaviour If Stage2 Fails",
+            "description": "s6-overlay behavior when stage 2 fails (2 = continue)",
+            "env_variable": "S6_BEHAVIOUR_IF_STAGE2_FAILS",
+            "default_value": "2",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "required|integer|between:0,3",
+            "field_type": "text"
+        },
+        {
+            "name": "S6 Logging",
+            "description": "s6-overlay logging level (0 = minimal)",
+            "env_variable": "S6_LOGGING",
+            "default_value": "0",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "required|integer|between:0,7",
+            "field_type": "text"
+        },
+        {
+            "name": "S6 Keep Environment",
+            "description": "Preserve environment variables for s6-overlay",
+            "env_variable": "S6_KEEP_ENV",
+            "default_value": "1",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "required|integer|in:0,1",
+            "field_type": "text"
         }
     ]
 }
