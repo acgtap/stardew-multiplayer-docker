@@ -5,12 +5,16 @@
 PTERODACTYL_MODE=false
 if [ -n "$P_SERVER_UUID" ] || [ ! -w "/var/run" ] 2>/dev/null; then
   PTERODACTYL_MODE=true
-  echo "==> Running in Pterodactyl mode - bypassing s6-overlay"
+  echo "==> 正在翼龙模式下运行 - 跳过s6-overlay"
   
   # Kill any s6-overlay processes that might be stuck
   pkill -9 s6 2>/dev/null || true
   pkill -9 s6-svscan 2>/dev/null || true
 fi
+
+# Install websockify
+echo "==> 安装websockify"
+apt-get update && apt-get install -y websockify
 
 # Note: HOME is set later based on deployment type (Pterodactyl vs standard)
 
@@ -46,7 +50,7 @@ chmod 777 /tmp/.X11-unix 2>/dev/null || true
 
 # Support Pterodactyl deployment - use /home/container for saves if it exists and is writable
 if [ -d "/home/container" ] && [ -w "/home/container" ]; then
-  echo "Pterodactyl deployment detected - using /home/container for saves"
+  echo "检测到翼龙部署 - 使用/home/container作为保存目录"
   export SAVE_DIR="/home/container/Saves"
   export CONFIG_BASE="/home/container"
   export LOG_DIR="/home/container/xdg/config/StardewValley/ErrorLogs"
@@ -59,7 +63,7 @@ if [ -d "/home/container" ] && [ -w "/home/container" ]; then
   export XDG_CACHE_HOME="/home/container/xdg/cache"
   export XDG_STATE_HOME="/home/container/xdg/state"
 else
-  echo "Standard deployment - using /config for saves"
+  echo "标准部署 - 使用/config作为保存目录"
   export SAVE_DIR="/config/xdg/config/StardewValley/Saves"
   export CONFIG_BASE="/config"
   export LOG_DIR="/config/xdg/config/StardewValley/ErrorLogs"
@@ -91,14 +95,14 @@ fi
 
 # Handle mods based on deployment mode
 if [ "$PTERODACTYL_MODE" = true ]; then
-  echo "==> Pterodactyl mode: Preparing mods in /home/container"
+  echo "==> 翼龙模式: 准备mods在/home/container"
   
   # In Pterodactyl mode, copy game files to writable directory if needed
   CONTAINER_GAME_DIR="$HOME/Stardew/Stardew Valley"
   
   # Check if we need to copy the game directory
   if [ ! -d "$CONTAINER_GAME_DIR" ]; then
-    echo "==> Copying game files to $CONTAINER_GAME_DIR..."
+    echo "==> 复制游戏文件到$CONTAINER_GAME_DIR..."
     echo "    Source: /data/Stardew/Stardew Valley"
     echo "    Destination: $HOME/Stardew/"
     
@@ -108,30 +112,30 @@ if [ "$PTERODACTYL_MODE" = true ]; then
     # Copy the game files (this will create /home/container/Stardew/Stardew Valley/)
     if [ -d "/data/Stardew/Stardew Valley" ]; then
       cp -r "/data/Stardew/Stardew Valley" "$HOME/Stardew/"
-      echo "==> Game files copied successfully"
+      echo "==> 游戏文件复制成功"
     else
       echo "ERROR: Source directory /data/Stardew/Stardew Valley not found!"
       exit 1
     fi
   else
-    echo "==> Game files already exist at $CONTAINER_GAME_DIR, skipping copy"
+    echo "==> 游戏文件已经存在 at $CONTAINER_GAME_DIR, 跳过复制"
   fi
   
   # Verify the game directory exists and show its contents
   if [ ! -d "$CONTAINER_GAME_DIR" ]; then
-    echo "ERROR: Game directory not found at $CONTAINER_GAME_DIR"
-    echo "Listing $HOME/Stardew/:"
+    echo "ERROR: 游戏目录 not found at $CONTAINER_GAME_DIR"
+    echo "列出 $HOME/Stardew/:"
     ls -la "$HOME/Stardew/" 2>&1 || echo "Directory does not exist"
     exit 1
   fi
   
-  echo "==> Game directory verified at: $CONTAINER_GAME_DIR"
-  echo "==> Game executable should be at: $CONTAINER_GAME_DIR/StardewModdingAPI"
+  echo "==> 游戏目录 verified at: $CONTAINER_GAME_DIR"
+  echo "==> 游戏可执行文件应该在: $CONTAINER_GAME_DIR/StardewModdingAPI"
   
   # Update GAME_DIR to point to writable location
   export GAME_DIR="$CONTAINER_GAME_DIR"
   
-  echo "==> Game directory set to: $GAME_DIR"
+  echo "==> 游戏目录 set to: $GAME_DIR"
   
   # Configure mods in the writable directory
   if [ -d "$GAME_DIR/Mods/" ]; then
@@ -151,7 +155,7 @@ if [ "$PTERODACTYL_MODE" = true ]; then
       fi
 
       if [ -f "${modPath}/config.json.template" ]; then
-        echo "Configuring ${modPath}config.json"
+        echo "配置 ${modPath}config.json"
         if [ "$(cat "${modPath}config.json" 2> /dev/null)" == "" ]; then
           envsubst < "${modPath}config.json.template" > "${modPath}config.json"
         fi
@@ -159,7 +163,7 @@ if [ "$PTERODACTYL_MODE" = true ]; then
     done
   fi
   
-  echo "==> Mods configured in $GAME_DIR/Mods/"
+  echo "==> mods 配置 in $GAME_DIR/Mods/"
 elif [ -w "/data/Stardew/Stardew Valley/Mods/" ] 2>/dev/null; then
   # Standard mode with writable mods directory
   for modPath in /data/Stardew/Stardew\ Valley/Mods/*/
@@ -171,13 +175,13 @@ elif [ -w "/data/Stardew/Stardew Valley/Mods/" ] 2>/dev/null; then
 
     # Remove the mod if it's not enabled
     if [ "${!var}" != "true" ]; then
-      echo "Removing ${modPath} (${var}=${!var})"
+      echo "删除 ${modPath} (${var}=${!var})"
       rm -rf "$modPath"
       continue
     fi
 
     if [ -f "${modPath}/config.json.template" ]; then
-      echo "Configuring ${modPath}config.json"
+      echo "配置 ${modPath}config.json"
 
       # Seed the config.json only if one isn't manually mounted in (or is empty)
       if [ "$(cat "${modPath}config.json" 2> /dev/null)" == "" ]; then
@@ -189,13 +193,13 @@ elif [ -w "/data/Stardew/Stardew Valley/Mods/" ] 2>/dev/null; then
   # Run extra steps for certain mods (only if writable)
   /opt/configure-remotecontrol-mod.sh
 else
-  echo "==> Skipping mod configuration (read-only filesystem)"
-  echo "==> All mods will be loaded with default settings"
+  echo "==> 跳过mod配置 (只读文件系统)"
+  echo "==> 所有mods 将使用默认设置加载"
 fi
 
 # Start VNC services if in Pterodactyl mode
 if [ "$PTERODACTYL_MODE" = true ]; then
-  echo "==> Starting VNC services for Pterodactyl..."
+  echo "==> 启动VNC服务 for Pterodactyl..."
   
   # Set default ports if not provided
   VNC_PORT="${VNC_PORT:-5900}"
@@ -213,16 +217,16 @@ if [ "$PTERODACTYL_MODE" = true ]; then
     # Create a simple VNC password file using Python (available in base image)
     python3 -c "import sys; sys.stdout.buffer.write(b'$VNC_PASSWORD\n')" 2>/dev/null || echo "$VNC_PASSWORD" > "$VNC_DIR/passwd.txt"
     chmod 600 "$VNC_DIR/passwd.txt" 2>/dev/null || true
-    echo "==> VNC password configured"
+    echo "==> VNC 密码 配置成功"
   else
-    echo "WARNING: No VNC_PASSWORD set, VNC may not work properly"
+    echo "没有VNC_PASSWORD, VNC可能无法正常工作"
   fi
   
   # Start Xvfb (virtual X server)
   export DISPLAY=:0
   Xvfb :0 -screen 0 "${DISPLAY_WIDTH:-1200}x${DISPLAY_HEIGHT:-900}x24" -ac -nolisten tcp -nolisten unix &
   XVFB_PID=$!
-  echo "==> Started Xvfb (PID: $XVFB_PID) at ${DISPLAY_WIDTH:-1200}x${DISPLAY_HEIGHT:-900}"
+  echo "==> 启动 Xvfb (PID: $XVFB_PID) at ${DISPLAY_WIDTH:-1200}x${DISPLAY_HEIGHT:-900}"
   
   # Wait for X server to be ready
   sleep 3
@@ -235,15 +239,17 @@ if [ "$PTERODACTYL_MODE" = true ]; then
   else
     x11vnc -display :0 -forever -shared -rfbport "$VNC_PORT" -bg -o "$VNC_LOG" 2>&1
   fi
-  echo "==> Started x11vnc on port $VNC_PORT (log: $VNC_LOG)"
+  echo "==> 启动 x11vnc on port $VNC_PORT (log: $VNC_LOG)"
   
   # Start noVNC (web VNC) if available
   if command -v websockify &> /dev/null; then
     websockify --web /usr/share/novnc "$WEBVNC_PORT" "localhost:$VNC_PORT" &>/dev/null &
-    echo "==> Started Web VNC on port $WEBVNC_PORT"
+    echo "==> 启动 Web VNC on port $WEBVNC_PORT"
+  else
+    echo "==> 未找到websockify, Web VNC不可用"
   fi
   
-  echo "==> Game server port: $GAME_PORT"
+  echo "==> 游戏服务器端口: $GAME_PORT"
 fi
 
 /opt/tail-smapi-log.sh &
