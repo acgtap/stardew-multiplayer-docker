@@ -94,18 +94,44 @@ if [ "$PTERODACTYL_MODE" = true ]; then
   echo "==> Pterodactyl mode: Preparing mods in /home/container"
   
   # In Pterodactyl mode, copy game files to writable directory if needed
-  CONTAINER_GAME_DIR="$HOME/Stardew"
+  CONTAINER_GAME_DIR="$HOME/Stardew/Stardew Valley"
   
   # Check if we need to copy the game directory
-  if [ ! -d "$CONTAINER_GAME_DIR/Stardew Valley" ]; then
+  if [ ! -d "$CONTAINER_GAME_DIR" ]; then
     echo "==> Copying game files to $CONTAINER_GAME_DIR..."
-    mkdir -p "$CONTAINER_GAME_DIR"
-    cp -r "/data/Stardew/Stardew Valley" "$CONTAINER_GAME_DIR/"
-    echo "==> Game files copied successfully"
+    echo "    Source: /data/Stardew/Stardew Valley"
+    echo "    Destination: $HOME/Stardew/"
+    
+    # Ensure the parent directory exists
+    mkdir -p "$HOME/Stardew"
+    
+    # Copy the game files (this will create /home/container/Stardew/Stardew Valley/)
+    if [ -d "/data/Stardew/Stardew Valley" ]; then
+      cp -r "/data/Stardew/Stardew Valley" "$HOME/Stardew/"
+      echo "==> Game files copied successfully"
+    else
+      echo "ERROR: Source directory /data/Stardew/Stardew Valley not found!"
+      exit 1
+    fi
+  else
+    echo "==> Game files already exist at $CONTAINER_GAME_DIR, skipping copy"
   fi
   
+  # Verify the game directory exists and show its contents
+  if [ ! -d "$CONTAINER_GAME_DIR" ]; then
+    echo "ERROR: Game directory not found at $CONTAINER_GAME_DIR"
+    echo "Listing $HOME/Stardew/:"
+    ls -la "$HOME/Stardew/" 2>&1 || echo "Directory does not exist"
+    exit 1
+  fi
+  
+  echo "==> Game directory verified at: $CONTAINER_GAME_DIR"
+  echo "==> Game executable should be at: $CONTAINER_GAME_DIR/StardewModdingAPI"
+  
   # Update GAME_DIR to point to writable location
-  export GAME_DIR="$CONTAINER_GAME_DIR/Stardew Valley"
+  export GAME_DIR="$CONTAINER_GAME_DIR"
+  
+  echo "==> Game directory set to: $GAME_DIR"
   
   # Configure mods in the writable directory
   if [ -d "$GAME_DIR/Mods/" ]; then
@@ -249,21 +275,23 @@ else
   
   # Create a wrapper script that runs the game from the correct directory
   WRAPPER_SCRIPT="$HOME/start_game.sh"
-  cat > "$WRAPPER_SCRIPT" << EOFWRAPPER
+  
+  # Use a different heredoc delimiter to avoid variable expansion issues
+  cat > "$WRAPPER_SCRIPT" <<EOF
 #!/bin/bash
 cd "$GAME_DIR"
 export SHELL=/bin/bash
 export TERM=xterm
 export XAUTHORITY=~/.Xauthority
-export HOME=$HOME
-export XDG_CONFIG_HOME=$XDG_CONFIG_HOME
-export XDG_DATA_HOME=$XDG_DATA_HOME
-export XDG_CACHE_HOME=$XDG_CACHE_HOME
-export XDG_STATE_HOME=$XDG_STATE_HOME
+export HOME="$HOME"
+export XDG_CONFIG_HOME="$XDG_CONFIG_HOME"
+export XDG_DATA_HOME="$XDG_DATA_HOME"
+export XDG_CACHE_HOME="$XDG_CACHE_HOME"
+export XDG_STATE_HOME="$XDG_STATE_HOME"
 
 # Start xterm which will run SMAPI
 exec xterm -e "/bin/bash -c 'cd \"$GAME_DIR\" && exec ./StardewModdingAPI'"
-EOFWRAPPER
+EOF
   
   chmod +x "$WRAPPER_SCRIPT"
   exec bash "$WRAPPER_SCRIPT"
