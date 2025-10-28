@@ -262,7 +262,7 @@ TERM=
 if [ -z "$GAME_DIR" ]; then
   GAME_DIR="/data/Stardew/Stardew Valley"
 fi
-GAME_LAUNCHER="$GAME_DIR/StardewValley"
+GAME_LAUNCHER="$GAME_DIR/Stardew Valley/Stardew Valley"
 
 if [ -w "$GAME_LAUNCHER" ] 2>/dev/null; then
   # Standard mode: modify in place
