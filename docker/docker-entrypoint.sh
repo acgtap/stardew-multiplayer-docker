@@ -23,9 +23,12 @@ mkdir -p "$SAVE_DIR"
 mkdir -p "$LOG_DIR"
 
 # Link save directory to expected location if not already linked
-if [ ! -L "/config/xdg/config/StardewValley/Saves" ]; then
-  mkdir -p /config/xdg/config/StardewValley
-  ln -sf "$SAVE_DIR" /config/xdg/config/StardewValley/Saves
+# Only create symlink for standard deployments, not Pterodactyl
+if [ ! -d "/home/container" ] || [ ! -w "/home/container" ]; then
+  if [ ! -L "/config/xdg/config/StardewValley/Saves" ]; then
+    mkdir -p /config/xdg/config/StardewValley
+    ln -sf "$SAVE_DIR" /config/xdg/config/StardewValley/Saves
+  fi
 fi
 
 for modPath in /data/Stardew/Stardew\ Valley/Mods/*/
