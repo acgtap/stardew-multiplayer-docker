@@ -136,21 +136,41 @@ if [ "$PTERODACTYL_MODE" = true ]; then
   
   # Configure mods in the writable directory
   if [ -d "$GAME_DIR/Mods/" ]; then
+    # List of built-in mods that should be controlled by environment variables
+    BUILTIN_MODS=("Always On Server" "AutoLoadGame" "ChatCommands" "CropsAnytimeAnywhere" "FriendsForever" "NoFenceDecay" "NonDestructiveNPCs" "RemoteControl" "TimeSpeed" "UnlimitedPlayers")
+    
     for modPath in "$GAME_DIR/Mods/"*/
     do
       [ -d "$modPath" ] || continue
       mod=$(basename "$modPath")
 
-      # Normalize mod name to uppercase and only characters
-      var="ENABLE_$(echo "${mod^^}" | tr -cd '[A-Z]')_MOD"
+      # Check if this is a built-in mod
+      is_builtin=false
+      for builtin_mod in "${BUILTIN_MODS[@]}"; do
+        if [ "$mod" == "$builtin_mod" ]; then
+          is_builtin=true
+          break
+        fi
+      done
 
-      # Remove the mod if it's not enabled
-      if [ "${!var}" != "true" ]; then
-        echo "Removing ${modPath} (${var}=${!var})"
-        rm -rf "$modPath"
-        continue
+      # Only check environment variables for built-in mods
+      if [ "$is_builtin" = true ]; then
+        # Normalize mod name to uppercase and only characters
+        var="ENABLE_$(echo "${mod^^}" | tr -cd '[A-Z]')_MOD"
+
+        # Remove the built-in mod if it's not enabled
+        if [ "${!var}" != "true" ]; then
+          echo "删除内置mod ${modPath} (${var}=${!var})"
+          rm -rf "$modPath"
+          continue
+        fi
+        
+        echo "启用内置mod: $mod"
+      else
+        echo "保留用户mod: $mod"
       fi
 
+      # Configure mod if it has a template
       if [ -f "${modPath}/config.json.template" ]; then
         echo "配置 ${modPath}config.json"
         if [ "$(cat "${modPath}config.json" 2> /dev/null)" == "" ]; then
@@ -163,20 +183,40 @@ if [ "$PTERODACTYL_MODE" = true ]; then
   echo "==> mods 配置 in $GAME_DIR/Mods/"
 elif [ -w "/data/Stardew/Stardew Valley/Mods/" ] 2>/dev/null; then
   # Standard mode with writable mods directory
+  # List of built-in mods that should be controlled by environment variables
+  BUILTIN_MODS=("Always On Server" "AutoLoadGame" "ChatCommands" "CropsAnytimeAnywhere" "FriendsForever" "NoFenceDecay" "NonDestructiveNPCs" "RemoteControl" "TimeSpeed" "UnlimitedPlayers")
+  
   for modPath in /data/Stardew/Stardew\ Valley/Mods/*/
   do
     mod=$(basename "$modPath")
 
-    # Normalize mod name to uppercase and only characters, eg. "Always On Server" => ENABLE_ALWAYSONSERVER_MOD
-    var="ENABLE_$(echo "${mod^^}" | tr -cd '[A-Z]')_MOD"
+    # Check if this is a built-in mod
+    is_builtin=false
+    for builtin_mod in "${BUILTIN_MODS[@]}"; do
+      if [ "$mod" == "$builtin_mod" ]; then
+        is_builtin=true
+        break
+      fi
+    done
 
-    # Remove the mod if it's not enabled
-    if [ "${!var}" != "true" ]; then
-      echo "删除 ${modPath} (${var}=${!var})"
-      rm -rf "$modPath"
-      continue
+    # Only check environment variables for built-in mods
+    if [ "$is_builtin" = true ]; then
+      # Normalize mod name to uppercase and only characters, eg. "Always On Server" => ENABLE_ALWAYSONSERVER_MOD
+      var="ENABLE_$(echo "${mod^^}" | tr -cd '[A-Z]')_MOD"
+
+      # Remove the built-in mod if it's not enabled
+      if [ "${!var}" != "true" ]; then
+        echo "删除内置mod ${modPath} (${var}=${!var})"
+        rm -rf "$modPath"
+        continue
+      fi
+      
+      echo "启用内置mod: $mod"
+    else
+      echo "保留用户mod: $mod"
     fi
 
+    # Configure mod if it has a template
     if [ -f "${modPath}/config.json.template" ]; then
       echo "配置 ${modPath}config.json"
 
