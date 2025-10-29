@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2025-10-28T16:00:41+08:00",
+    "exported_at": "2025-10-29T13:10:55+08:00",
     "name": "Stardew Valley vnc2",
     "author": "support@pterodactyl.io",
     "description": "Stardew Valley multiplayer server with SMAPI mod loader and VNC support. Configure game, VNC, and Web VNC ports in the startup variables.",
@@ -16,7 +16,7 @@
     "startup": "\/startapp.sh",
     "config": {
         "files": "{}",
-        "startup": "{\r\n    \"done\": \"SMAPI ready\"\r\n}",
+        "startup": "{\r\n    \"done\": \"Type 'help'\"\r\n}",
         "logs": "{}",
         "stop": "^C"
     },
@@ -29,8 +29,8 @@
     },
     "variables": [
         {
-            "name": "Game Port",
-            "description": "Port for the game server (UDP)",
+            "name": "\u6e38\u620f\u7aef\u53e3",
+            "description": "\u6e38\u620f\u7684\u7aef\u53e3",
             "env_variable": "GAME_PORT",
             "default_value": "24642",
             "user_viewable": true,
@@ -39,8 +39,8 @@
             "field_type": "text"
         },
         {
-            "name": "VNC Port",
-            "description": "Port for VNC server access (TCP)",
+            "name": "VNC\u7aef\u53e3",
+            "description": "VNC\u7684\u7aef\u53e3",
             "env_variable": "VNC_PORT",
             "default_value": "5900",
             "user_viewable": true,
@@ -49,8 +49,8 @@
             "field_type": "text"
         },
         {
-            "name": "Web VNC Port",
-            "description": "Port for browser-based VNC access (TCP)",
+            "name": "Web VNC\u7aef\u53e3",
+            "description": "Web VNC\u7684\u7aef\u53e3",
             "env_variable": "WEBVNC_PORT",
             "default_value": "5800",
             "user_viewable": true,
@@ -59,8 +59,8 @@
             "field_type": "text"
         },
         {
-            "name": "VNC Password",
-            "description": "Password for VNC access to the server",
+            "name": "VNC\u5bc6\u7801",
+            "description": "VNC\u7684\u5bc6\u7801",
             "env_variable": "VNC_PASSWORD",
             "default_value": "nyanyanya",
             "user_viewable": true,
@@ -69,28 +69,28 @@
             "field_type": "text"
         },
         {
-            "name": "Display Width",
-            "description": "Width of the display for VNC",
+            "name": "\u663e\u793a\u5bbd\u5ea6",
+            "description": "VNC\u7684\u5bbd\u5ea6",
             "env_variable": "DISPLAY_WIDTH",
-            "default_value": "1200",
+            "default_value": "1280",
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|integer|min:800|max:3840",
             "field_type": "text"
         },
         {
-            "name": "Display Height",
-            "description": "Height of the display for VNC",
+            "name": "\u663e\u793a\u9ad8\u5ea6",
+            "description": "VNC\u7684\u9ad8\u5ea6",
             "env_variable": "DISPLAY_HEIGHT",
-            "default_value": "900",
+            "default_value": "720",
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|integer|min:600|max:2160",
             "field_type": "text"
         },
         {
-            "name": "Enable Always On Server",
-            "description": "Enable the Always On Server mod",
+            "name": "\u542f\u7528Always On Server mod",
+            "description": "\u542f\u7528Always On Server mod",
             "env_variable": "ENABLE_ALWAYSONSERVER_MOD",
             "default_value": "true",
             "user_viewable": true,
@@ -99,8 +99,8 @@
             "field_type": "text"
         },
         {
-            "name": "Enable Unlimited Players",
-            "description": "Enable the Unlimited Players mod",
+            "name": "\u542f\u7528Unlimited Players mod",
+            "description": "\u542f\u7528Unlimited Players mod",
             "env_variable": "ENABLE_UNLIMITEDPLAYERS_MOD",
             "default_value": "true",
             "user_viewable": true,
@@ -109,8 +109,8 @@
             "field_type": "text"
         },
         {
-            "name": "Player Limit",
-            "description": "Maximum number of players allowed",
+            "name": "\u73a9\u5bb6\u6570\u91cf\u9650\u5236",
+            "description": "\u73a9\u5bb6\u6570\u91cf\u7684\u9650\u5236",
             "env_variable": "UNLIMITED_PLAYERS_PLAYER_LIMIT",
             "default_value": "10",
             "user_viewable": true,
@@ -119,8 +119,8 @@
             "field_type": "text"
         },
         {
-            "name": "Enable Auto Load Game",
-            "description": "Enable the Auto Load Game mod",
+            "name": "\u542f\u7528Auto Load Game mod",
+            "description": "\u542f\u7528Auto Load Game mod",
             "env_variable": "ENABLE_AUTOLOADGAME_MOD",
             "default_value": "true",
             "user_viewable": true,
@@ -129,8 +129,8 @@
             "field_type": "text"
         },
         {
-            "name": "Auto Load Last File",
-            "description": "Automatically load the last played save file",
+            "name": "\u81ea\u52a8\u52a0\u8f7d\u6700\u540e\u4e00\u4e2a\u4fdd\u5b58\u7684\u6587\u4ef6",
+            "description": "\u81ea\u52a8\u52a0\u8f7d\u6700\u540e\u4e00\u4e2a\u4fdd\u5b58\u7684\u6587\u4ef6",
             "env_variable": "AUTO_LOAD_GAME_LAST_FILE_LOADED",
             "default_value": "null",
             "user_viewable": true,
@@ -139,8 +139,8 @@
             "field_type": "text"
         },
         {
-            "name": "Load Into Multiplayer",
-            "description": "Automatically load into multiplayer mode",
+            "name": "\u81ea\u52a8\u52a0\u8f7d\u5230\u591a\u4eba\u6a21\u5f0f",
+            "description": "\u81ea\u52a8\u52a0\u8f7d\u5230\u591a\u4eba\u6a21\u5f0f",
             "env_variable": "AUTO_LOAD_GAME_LOAD_INTO_MULTIPLAYER",
             "default_value": "true",
             "user_viewable": true,
@@ -149,8 +149,8 @@
             "field_type": "text"
         },
         {
-            "name": "Enable Remote Control",
-            "description": "Enable the Remote Control mod",
+            "name": "\u542f\u7528Remote Control mod",
+            "description": "\u542f\u7528Remote Control mod",
             "env_variable": "ENABLE_REMOTECONTROL_MOD",
             "default_value": "true",
             "user_viewable": true,
@@ -159,8 +159,8 @@
             "field_type": "text"
         },
         {
-            "name": "Enable Save Backup",
-            "description": "Enable automatic save backups",
+            "name": "\u542f\u7528Save Backup mod",
+            "description": "\u542f\u7528\u81ea\u52a8\u4fdd\u5b58\u5907\u4efd",
             "env_variable": "ENABLE_SAVEBACKUP_MOD",
             "default_value": "true",
             "user_viewable": true,
@@ -169,8 +169,8 @@
             "field_type": "text"
         },
         {
-            "name": "Time of Day to Sleep",
-            "description": "What time the server should automatically sleep (24-hour format, e.g., 2200 for 10 PM)",
+            "name": "\u81ea\u52a8\u7761\u7720\u7684\u65f6\u95f4",
+            "description": "\u81ea\u52a8\u7761\u7720\u7684\u65f6\u95f4 (24\u5c0f\u65f6\u5236, \u4f8b\u5982: 2200 \u8868\u793a10 PM)",
             "env_variable": "ALWAYS_ON_SERVER_TIME_OF_DAY_TO_SLEEP",
             "default_value": "2200",
             "user_viewable": true,
@@ -179,18 +179,18 @@
             "field_type": "text"
         },
         {
-            "name": "S6 Runtime Directory",
-            "description": "Directory for s6-overlay runtime files (should be writable)",
+            "name": "s6-overlay\u8fd0\u884c\u65f6\u6587\u4ef6\u7684\u76ee\u5f55",
+            "description": "s6-overlay\u8fd0\u884c\u65f6\u6587\u4ef6\u7684\u76ee\u5f55 (\u5e94\u8be5\u53ef\u5199)",
             "env_variable": "S6_RUNTIME_DIR",
-            "default_value": "/tmp/s6-runtime",
+            "default_value": "\/tmp\/s6-runtime",
             "user_viewable": false,
             "user_editable": false,
             "rules": "required|string|max:255",
             "field_type": "text"
         },
         {
-            "name": "S6 Read Only Root",
-            "description": "Allow s6-overlay to work with read-only root filesystem",
+            "name": "\u5141\u8bb8s6-overlay\u4f7f\u7528\u53ea\u8bfb\u6839\u6587\u4ef6\u7cfb\u7edf",
+            "description": "\u5141\u8bb8s6-overlay\u4f7f\u7528\u53ea\u8bfb\u6839\u6587\u4ef6\u7cfb\u7edf",
             "env_variable": "S6_READ_ONLY_ROOT",
             "default_value": "1",
             "user_viewable": false,
@@ -199,8 +199,8 @@
             "field_type": "text"
         },
         {
-            "name": "S6 Behaviour If Stage2 Fails",
-            "description": "s6-overlay behavior when stage 2 fails (2 = continue)",
+            "name": "s6-overlay\u5f53stage 2\u5931\u8d25\u65f6\u7684\u884c\u4e3a",
+            "description": "s6-overlay\u5f53stage 2\u5931\u8d25\u65f6\u7684\u884c\u4e3a (2 = \u7ee7\u7eed)",
             "env_variable": "S6_BEHAVIOUR_IF_STAGE2_FAILS",
             "default_value": "2",
             "user_viewable": false,
@@ -209,8 +209,8 @@
             "field_type": "text"
         },
         {
-            "name": "S6 Logging",
-            "description": "s6-overlay logging level (0 = minimal)",
+            "name": "s6-overlay\u65e5\u5fd7\u7ea7\u522b",
+            "description": "s6-overlay\u65e5\u5fd7\u7ea7\u522b (0 = \u6700\u5c0f)",
             "env_variable": "S6_LOGGING",
             "default_value": "0",
             "user_viewable": false,
@@ -219,8 +219,8 @@
             "field_type": "text"
         },
         {
-            "name": "S6 Keep Environment",
-            "description": "Preserve environment variables for s6-overlay",
+            "name": "\u4fdd\u7559\u73af\u5883\u53d8\u91cf\u7ed9s6-overlay",
+            "description": "\u4fdd\u7559\u73af\u5883\u53d8\u91cf\u7ed9s6-overlay",
             "env_variable": "S6_KEEP_ENV",
             "default_value": "1",
             "user_viewable": false,
@@ -229,10 +229,40 @@
             "field_type": "text"
         },
         {
-            "name": "Enable Console Input",
-            "description": "启用翼龙控制台输入模式。开启后可以直接在控制台输入SMAPI命令，但游戏窗口可能不稳定。关闭则需要通过VNC访问。",
+            "name": "\u542f\u7528\u7ffc\u9f99\u63a7\u5236\u53f0\u8f93\u5165\u6a21\u5f0f",
+            "description": "\u542f\u7528\u7ffc\u9f99\u63a7\u5236\u53f0\u8f93\u5165\u6a21\u5f0f\u3002\u5f00\u542f\u540e\u53ef\u4ee5\u76f4\u63a5\u5728\u63a7\u5236\u53f0\u8f93\u5165SMAPI\u547d\u4ee4\uff0c\u4f46\u6e38\u620f\u7a97\u53e3\u53ef\u80fd\u4e0d\u7a33\u5b9a\u3002\u5173\u95ed\u5219\u9700\u8981\u901a\u8fc7VNC\u8bbf\u95ee\u3002",
             "env_variable": "ENABLE_CONSOLE_INPUT",
             "default_value": "false",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:true,false",
+            "field_type": "text"
+        },
+        {
+            "name": "\u542f\u7528Change Server Port mod",
+            "description": "\u542f\u7528Change Server Port mod\uff0c\u5141\u8bb8\u4fee\u6539\u670d\u52a1\u5668\u7aef\u53e3",
+            "env_variable": "ENABLE_CHANGESERVERPORT_MOD",
+            "default_value": "true",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:true,false",
+            "field_type": "text"
+        },
+        {
+            "name": "\u542f\u7528Console Commands mod",
+            "description": "\u542f\u7528Console Commands mod\uff0c\u63d0\u4f9b\u66f4\u591a\u63a7\u5236\u53f0\u547d\u4ee4",
+            "env_variable": "ENABLE_CONSOLECOMMANDS_MOD",
+            "default_value": "true",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:true,false",
+            "field_type": "text"
+        },
+        {
+            "name": "\u542f\u7528Server CMD mod",
+            "description": "\u542f\u7528Server CMD mod\uff0c\u63d0\u4f9b\u670d\u52a1\u5668\u7ba1\u7406\u547d\u4ee4",
+            "env_variable": "ENABLE_SERVERCMD_MOD",
+            "default_value": "true",
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|in:true,false",

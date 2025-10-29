@@ -137,7 +137,7 @@ if [ "$PTERODACTYL_MODE" = true ]; then
   # Configure mods in the writable directory
   if [ -d "$GAME_DIR/Mods/" ]; then
     # List of built-in mods that should be controlled by environment variables
-    BUILTIN_MODS=("Always On Server" "AutoLoadGame" "ChatCommands" "CropsAnytimeAnywhere" "FriendsForever" "NoFenceDecay" "NonDestructiveNPCs" "RemoteControl" "TimeSpeed" "UnlimitedPlayers")
+    BUILTIN_MODS=("Always On Server" "AutoLoadGame" "ChatCommands" "ChangeServerPort" "ConsoleCommands" "CropsAnytimeAnywhere" "FriendsForever" "NoFenceDecay" "NonDestructiveNPCs" "RemoteControl" "ServerCMD" "TimeSpeed" "UnlimitedPlayers")
     
     for modPath in "$GAME_DIR/Mods/"*/
     do
@@ -184,7 +184,7 @@ if [ "$PTERODACTYL_MODE" = true ]; then
 elif [ -w "/data/Stardew/Stardew Valley/Mods/" ] 2>/dev/null; then
   # Standard mode with writable mods directory
   # List of built-in mods that should be controlled by environment variables
-  BUILTIN_MODS=("Always On Server" "AutoLoadGame" "ChatCommands" "CropsAnytimeAnywhere" "FriendsForever" "NoFenceDecay" "NonDestructiveNPCs" "RemoteControl" "TimeSpeed" "UnlimitedPlayers")
+  BUILTIN_MODS=("Always On Server" "AutoLoadGame" "ChatCommands" "ChangeServerPort" "ConsoleCommands" "CropsAnytimeAnywhere" "FriendsForever" "NoFenceDecay" "NonDestructiveNPCs" "RemoteControl" "ServerCMD" "TimeSpeed" "UnlimitedPlayers")
   
   for modPath in /data/Stardew/Stardew\ Valley/Mods/*/
   do
@@ -335,6 +335,23 @@ if [ "$PTERODACTYL_MODE" = true ]; then
   
   echo "==> 游戏服务器端口: $GAME_PORT"
 fi
+
+
+# 将游戏端口写入/
+# home
+# /
+# container
+# /
+# Stardew
+# /
+# Stardew Valley
+# /
+# Mods
+# /
+# ChangeServerPort
+# /config.txt
+
+echo "$GAME_PORT" > "$HOME/Stardew/Stardew Valley/Mods/ChangeServerPort/config.txt"
 
 /opt/tail-smapi-log.sh &
 
