@@ -352,6 +352,8 @@ fi
 # /config.txt
 
 echo "$GAME_PORT" > "$HOME/Stardew/Stardew Valley/Mods/ChangeServerPort/config.txt"
+# 向Saves目录写入一个文件说明存档目录在xdg/config/StardewValley/Saves
+echo "存档文件在xdg/config/StardewValley/Saves目录" > "Saves/请读我存档不在这.txt"
 
 /opt/tail-smapi-log.sh &
 
