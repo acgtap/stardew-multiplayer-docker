@@ -10,7 +10,7 @@ services:
       - "VNC_PASSWORD=nyanyanya"
       - "DISPLAY_HEIGHT=900"
       - "DISPLAY_WIDTH=1200"
-      ## Always On Server mod
+
       # Removing this will probably defeat the point of ever using this?
       - ENABLE_ALWAYSONSERVER_MOD=${ENABLE_ALWAYSONSERVER_MOD-true}
       - ALWAYS_ON_SERVER_HOTKEY=${ALWAYS_ON_SERVER_HOTKEY-F9}
