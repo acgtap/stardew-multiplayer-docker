@@ -1,10 +1,9 @@
 {
-  "Name": "Always On Server",
-  "Author": "funny-snek & Zuberii",
-  "Version": "1.20.3-unofficial.4-mikkoperkele",
-  "Description": "A Headless server mod.",
-  "UniqueID": "mikko.Always_On_Server",
-  "EntryDll": "Always On Server.dll",
-  "MinimumApiVersion": "4.0.0",
-  "UpdateKeys": [ "Nexus:2677" ]
+  "Name": "ALOS",
+  "Author": "Lixeer",
+  "Version": "1.0.5",
+  "Description": "Always on server mod for Stardew Valley. Keep your farm running even when you're not playing!",
+  "UniqueID": "Lixeer.Always_On_Server",
+  "EntryDll": "ALOS.dll",
+  "MinimumApiVersion": "4.0"
 }
